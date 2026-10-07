@@ -38,7 +38,6 @@ public class AES {
 	
 	
 	/*
-	 * A revoir
 	 * Permmet de transformer une chaine de caractere en un tableau d'entier (0 et 1)
 	 */
 	private int [] stringToBits(String message) {
@@ -49,8 +48,8 @@ public class AES {
 			//Parcourt les bits de l'octet de la position 7 à 0 vu qu'un octet contient 8 bits
 			for (int j  = 7; j >= 0; j--) {
 				// i * 8 -> indique à partir de quelle position dans "bits" commence l'octet actuel
-				//(7 - j) -> permet de placer les bits dans l'ordre 0 à 7 dans notre tableau
-				bits[i * 8 + (7-j)] = (bytes[i] >> j) & 1;   // >> decale les bits vers la droite de i positions et &1 permet de garder que le dernier bit
+				//(7 - j) -> convertit j (qui descend de 7 à 0) en un indice qui monte de 0 à 7 ainsi le bit de poids fort est rangé en premier
+				bits[i * 8 + (7-j)] = (bytes[i] >> j) & 1;   // >> decale les bits vers la droite de j positions et &1 permet de garder que le dernier bit
 			}
 		}
 		return bits;
