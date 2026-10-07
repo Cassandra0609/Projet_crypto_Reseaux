@@ -8,7 +8,7 @@ public class TestAES {
 		
 		/*
 		 * Tests pour la première méthode stringToBits
-		 
+		 */
 		String message1 = "A";
         int[] bits1 = aes.stringToBits(message1);
         System.out.print("Message : " + message1 + " -> Bits : " + Arrays.toString(bits1));
@@ -24,7 +24,37 @@ public class TestAES {
         String message3 = "Bonjour";
         int[] bits3 = aes.stringToBits(message3);
         System.out.print("Message : " + message3 + " -> Bits : " + Arrays.toString(bits3));
-        */
+        
+		
+		
+		/*
+		 * Tests pour la deuxieme method bitsToString 
+		 */
+		String message = "Bonjour";
+
+		int[] bits = aes.stringToBits(message);
+
+		System.out.println("Message original : " + message);
+		System.out.println("Bits : " + Arrays.toString(bits));
+
+		String resultat = aes.bitsToString(bits);
+
+		System.out.println("Message après conversion : " + resultat);
+		
+		System.out.println();
+		
+		
+		
+		/*
+		 * Tests pour la troisieme method genereMasterKey 
+		 */
+		int[][] cle = aes.genereMasterKey();
+		for (int[] ligne : cle) {
+		    for (int v : ligne) {
+		    	System.out.print(v + " ");
+		    }
+		    System.out.println();
+		}
 	}
 	
 

@@ -128,6 +128,21 @@ public class AES {
 		String resultat = aes.bitsToString(bits);
 
 		System.out.println("Message après conversion : " + resultat);
+		
+		System.out.println();
+		
+		
+		
+		/*
+		 * Tests pour la troisieme method genereMasterKey 
+		 */
+		int[][] cle = aes.genereMasterKey();
+		for (int[] ligne : cle) {
+		    for (int v : ligne) {
+		    	System.out.print(v + " ");
+		    }
+		    System.out.println();
+		}
 	}
 
 }
