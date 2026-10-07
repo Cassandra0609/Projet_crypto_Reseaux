@@ -1,4 +1,5 @@
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.Arrays;
 
 public class AES {
@@ -77,10 +78,22 @@ public class AES {
 	
 	
 	/*
-	 * Permet de generer une clé maitre aléatoire de taille choisie (128 ou 192 ou 256)
+	 * Permet de generer une cle maitre aleatoire de taille choisie (128 ou 192 ou 256)
 	 */
-	private int [] genereMasterKey() {
-		return null;
+	private int [][] genereMasterKey() {
+		int lignes = 4; // la matrice de l'AES a toujours 4 lignes (4 octets par mot de cle)
+		int colonnes = this.taille_cle_maitre/32;  // 1 mot = 32 bits donc le nombre de colonnes dépend de la taille de la cle
+		int [][] cle = new int [lignes][colonnes]; // Cree la matrice de la cle maitre
+		SecureRandom random = new SecureRandom();  // Generateur aleatoire securise
+		// Remplit chaque case avec un octet aléatoire
+		for (int i = 0; i < lignes; i++) {
+			for (int j = 0; j < colonnes; j++) {
+				cle[i][j] = random.nextInt(256);  // un octet peut prendre des valeurs de 0 à 255
+			}
+		}
+		//Stocke la cle genere dans l'attribut 
+		this.master_Key = cle;
+		return cle;
 		
 	}
 	
