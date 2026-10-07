@@ -42,11 +42,18 @@ public class AES {
 	 * Permmet de transformer une chaine de caractere en un tableau d'entier (0 et 1)
 	 */
 	private int [] stringToBits(String message) {
-		byte [] bytes = message.getBytes(StandardCharsets.UTF_8);
-		StringBuilder binaire = new StringBuilder();
-		
-		
-		return null;
+		byte [] bytes = message.getBytes(StandardCharsets.UTF_8);  // recupere les octets du mess et les mets sous forme de tableau
+		int[] bits = new int[bytes.length * 8];  //chaque octet contient 8 bits donc il nous faut la taille du mot *8 cases dans notre tableau
+		// Parcourt tous les octets du message
+		for (int i = 0; i < bytes.length ; i++ ) {
+			//Parcourt les bits de l'octet de la position 7 à 0 vu qu'un octet contient 8 bits
+			for (int j  = 7; j >= 0; j--) {
+				// i * 8 -> indique à partir de quelle position dans "bits" commence l'octet actuel
+				//(7 - j) -> permet de placer les bits dans l'ordre 0 à 7 dans notre tableau
+				bits[i * 8 + (7-j)] = (bytes[i] >> j) & 1;   // >> decale les bits vers la droite de i positions et &1 permet de garder que le dernier bit
+			}
+		}
+		return bits;
 	}
 	
 	
