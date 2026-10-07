@@ -89,6 +89,7 @@ public class AES {
 		// Instanciation de l'AES avec une cle de 128 bits
 		AES aes = new AES(128);				
 		
+		
 		/*
 		 * Tests pour la premiere method stringToBits
 		 */
@@ -106,12 +107,14 @@ public class AES {
 		 */
 		String message = "Bonjour";
 
-	    int[] bits = aes.stringToBits(message);
+		int[] bits = aes.stringToBits(message);
 
-	    String resultat = aes.bitsToString(bits);
+		System.out.println("Message original : " + message);
+		System.out.println("Bits : " + Arrays.toString(bits));
 
-	    System.out.println("Message original : " + message);
-	    System.out.println("Message après conversion : " + resultat);
+		String resultat = aes.bitsToString(bits);
+
+		System.out.println("Message après conversion : " + resultat);
 	}
 
 }
