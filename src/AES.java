@@ -195,6 +195,19 @@ public class AES {
 		    }
 		    System.out.println();
 		}
+		
+		
+		
+		/*
+		 * Tests pour la quatrieme method bourrage 
+		 */
+		String messageB = "Bonjour";
+
+		int[] bitsB = aes.stringToBits(messageB);
+		int[] bitsBourres = aes.bourrage(bits);
+
+		System.out.println("Taille avant : " + bitsB.length);
+		System.out.println("Taille après : " + bitsBourres.length);
 	}
 
 }

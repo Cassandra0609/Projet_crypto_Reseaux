@@ -55,6 +55,18 @@ public class TestAES {
 		    }
 		    System.out.println();
 		}
+		
+		
+		
+		
+		String messageB = "Bonjour";
+
+		int[] bitsB = aes.stringToBits(messageB);
+		int[] bitsBourres = aes.bourrage(bitsB);
+
+		System.out.println("Taille avant : " + bitsB.length);
+		System.out.println("Taille après : " + bitsBourres.length);
+		
 	}
 	
 
