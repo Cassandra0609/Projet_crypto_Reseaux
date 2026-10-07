@@ -94,10 +94,62 @@ public class AES {
 		//Stocke la cle genere dans l'attribut 
 		this.master_Key = cle;
 		return cle;
-		
 	}
 	
 
+	/*
+	 * Permet d'ajouter un bourrage pour que la taille du message soit un multiple de 128 bits
+	 */
+	private int [] bourrage(int[] bits) {
+		int reste = bits.length % 128;
+		int bitsAAjouter = 128 - reste;  // calcule combien de bits il faut ajouter pour atteindre le prochain multiple de 128
+		int octetsAjouter = bitsAAjouter / 8; // 1 octet = 8 bits donc on transforme le nombre de bits a ajouter en nombre d'octets
+		int [] resultat = new int [bits.length + bitsAAjouter]; // tab qui contiendra le message + le bourrage
+		// Parcourt tous les bits du message original
+		for (int i = 0; i < bits.length; i++) {
+		    resultat[i] = bits[i]; // copie les bits du message original
+		}
+		int [] valeurBinaire = new int [8];
+		// Parcourt les 8 positions possibles d'un octet
+		for (int j  = 7; j >= 0; j--) {
+		        valeurBinaire[7-j] = (octetsAjouter >> j) & 1 ;
+		}
+		// Ajoute la valeur de bourrage autant de fois qu'il y a d'octets a ajouter
+		for (int i = 0; i < octetsAjouter; i++) {
+			// Permet de copier les 8 bits de valeurBinaire dans resultat
+	        for (int j = 0; j < 8; j++) {
+	            resultat[bits.length + i * 8 + j] = valeurBinaire[j];  // calcule la position où placer le bit
+	        }
+	    }
+	    return resultat;
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	/*
+	 * Permet de generer les cles de rondes
+	 */
+	private int createKeys() {
+		return 0;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public static void main(String[] args) {
 		// Instanciation de l'AES avec une cle de 128 bits
 		AES aes = new AES(128);				
