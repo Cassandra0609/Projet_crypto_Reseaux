@@ -62,15 +62,15 @@ public class AES {
 	 */
 	private String bitsToString(int[] blocs) {
 		int nombrebytes = blocs.length / 8;   // 8 bits correspondent à 1 octet
-		byte [] bytes = new byte [nombrebytes];
+		byte [] bytes = new byte [nombrebytes]; //tab qui va contenir les octets reconstruits
 		// Parcourt chaque octet que l'on doit reconstruire
 		for (int i = 0; i < bytes.length ; i++ ) {
 	        byte b = 0;   // Valeur de l'octet que l'on est en train de construire
 	        // Parcourt les 8 bits correspondant à cet octet
 	        for (int j = 0; j < 8; j++) {
-	        	b = (byte) ((b << 1) | blocs[i*8 + j]);  // Reconstruit l'octet bit par bit en décalant vers la gauche
+	        	b = (byte) ((b << 1) | blocs[i*8 + j]);  // Reconstruit l'octet bit par bit en décalant de 1 vers la gauche et en ajoutant le nouveau 0 ou 1
 	        }
-	        bytes[i] = b;
+	        bytes[i] = b; // place l'octet reconstruit dans le tableau
 		}
 		return new String(bytes, StandardCharsets.UTF_8);
 	}
