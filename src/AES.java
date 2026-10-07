@@ -61,8 +61,18 @@ public class AES {
 	 * Permet de transforer un tableau d'entier (0 et1) en chaine de caractere
 	 */
 	private String bitsToString(int[] blocs) {
-		
-		return null;
+		int nombrebytes = blocs.length / 8;   // 8 bits correspondent à 1 octet
+		byte [] bytes = new byte [nombrebytes];
+		// Parcourt chaque octet que l'on doit reconstruire
+		for (int i = 0; i < bytes.length ; i++ ) {
+	        byte b = 0;   // Valeur de l'octet que l'on est en train de construire
+	        // Parcourt les 8 bits correspondant à cet octet
+	        for (int j = 0; j < 8; j++) {
+	        	b = (byte) ((b << 1) | blocs[i*8 + j]);  // Reconstruit l'octet bit par bit en décalant vers la gauche
+	        }
+	        bytes[i] = b;
+		}
+		return new String(bytes, StandardCharsets.UTF_8);
 	}
 	
 	
@@ -78,8 +88,9 @@ public class AES {
 	public static void main(String[] args) {
 		// Instanciation de l'AES avec une cle de 128 bits
 		AES aes = new AES(128);				
+		
 		/*
-		 * Tests pour la première méthode stringToBits
+		 * Tests pour la premiere method stringToBits
 		 */
 		String message1 = "A";
 		int[] bits1 = aes.stringToBits(message1);
@@ -87,16 +98,20 @@ public class AES {
 		
 		System.out.println();
 		       
-		String message2 = "AB";
-		int[] bits2 = aes.stringToBits(message2);
-		System.out.print("Message : " + message2 + " -> Bits : " + Arrays.toString(bits2));
-		        
-		System.out.println();
-		        
-		String message3 = "Bonjour";
-		int[] bits3 = aes.stringToBits(message3);
-		System.out.print("Message : " + message3 + " -> Bits : " + Arrays.toString(bits3));
+		
+		
 
+		/*
+		 * Tests pour la deuxieme method bitsToString 
+		 */
+		String message = "Bonjour";
+
+	    int[] bits = aes.stringToBits(message);
+
+	    String resultat = aes.bitsToString(bits);
+
+	    System.out.println("Message original : " + message);
+	    System.out.println("Message après conversion : " + resultat);
 	}
 
 }
