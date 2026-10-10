@@ -59,13 +59,21 @@ public class TestAES {
 		
 		
 		
+		/*
+		 * Tests pour la quatrieme method bourrage 
+		 */
 		String messageB = "Bonjour";
 
 		int[] bitsB = aes.stringToBits(messageB);
-		int[] bitsBourres = aes.bourrage(bitsB);
+		int[] bitsBourrage = aes.bourrage(bitsB);
 
 		System.out.println("Taille avant : " + bitsB.length);
-		System.out.println("Taille après : " + bitsBourres.length);
+		System.out.println("Taille après : " + bitsBourrage.length);
+		
+		
+		
+		
+		
 		
 	}
 	
