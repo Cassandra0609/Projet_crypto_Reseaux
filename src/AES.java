@@ -99,6 +99,7 @@ public class AES {
 
 	/*
 	 * Permet d'ajouter un bourrage pour que la taille du message soit un multiple de 128 bits
+	 * Chaque octet ajouté vaut le nombre d'octets ajoutés, ce qui permet plus tard au débourrage de savoir combien en retirer
 	 */
 	private int [] bourrage(int[] bits) {
 		int reste = bits.length % 128;
@@ -109,8 +110,9 @@ public class AES {
 		for (int i = 0; i < bits.length; i++) {
 		    resultat[i] = bits[i]; // copie les bits du message original
 		}
-		int [] valeurBinaire = new int [8];
+		int [] valeurBinaire = new int [8]; // écriture binaire de octetsAjouter -> sert d'octet de bourrage
 		// Parcourt les 8 positions possibles d'un octet
+		// Extrait chaque bit de octetsAjouter, du poids fort au poids faible
 		for (int j  = 7; j >= 0; j--) {
 		        valeurBinaire[7-j] = (octetsAjouter >> j) & 1 ;
 		}
@@ -126,7 +128,25 @@ public class AES {
 	}
 	
 	
-	
+	/*
+	 * Permet de retirer le bourrage ajouté à la fin du message pour retrouver le message original en bits
+	 */
+	private int [] debourrage(int[] bits) {
+		int valeurBourrage = 0 ;   // contient la valeur décimale du dernier octet
+		// Parcourt les 8 derniers bits du tableau
+		for (int i = bits.length - 8; i < bits.length; i++) {
+			valeurBourrage = (valeurBourrage << 1) | bits[i] ; // reconstruit la valeur du dernier octet bit après bit
+		}
+		// Taille du message sans le bourrage
+		int bitsOriginal = bits.length - (valeurBourrage * 8);  // (valeurBourrage * 8) : convertit le nombre d'octets de bourrage en nombre de bits
+		int [] resultat = new int [bitsOriginal];  /// tableau qui contiendra le message original
+		// Permet de copier uniquement les bits du message original dans resultat
+		for (int i = 0; i < bits.length; i++) {
+		    resultat[i] = bits[i]; // copie les bits du message original
+		}
+	    return resultat;
+		
+	}
 	
 	
 	
