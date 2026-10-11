@@ -107,6 +107,12 @@ public class TestAES {
 	        for (int v : ligne) System.out.print(v + " ");
 	        System.out.println();
 	    }
+	    
+        System.out.println();
+	    
+	    //Test 3 -> plusieurs blocs
+	    int[][][] blocs3 = aes.decoupage_en_blocs(aes.bourrage(aes.stringToBits("Bonjour tout le monde")));
+	    System.out.println("Nombre de blocs : " + blocs3.length);
 		
 	}
 	
