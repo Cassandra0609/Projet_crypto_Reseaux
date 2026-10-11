@@ -72,8 +72,19 @@ public class TestAES {
 		
 		
 		
-		
-		
+		/*
+		 * Tests pour la cinquieme method debourrage (ey les 2 methodes combinés)
+		 */
+		String message = "Bonjour";
+
+		int[] bits = aes.stringToBits(message);
+		int[] bitsBourres = aes.bourrage(bits);
+		int[] bitsOriginaux = aes.debourrage(bitsBourres);
+
+		System.out.println(bits.length);
+		System.out.println(bitsBourres.length);
+		System.out.println(bitsOriginaux.length);
+		System.out.println(aes.bitsToString(bitsOriginaux));
 		
 	}
 	

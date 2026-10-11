@@ -141,7 +141,7 @@ public class AES {
 		int bitsOriginal = bits.length - (valeurBourrage * 8);  // (valeurBourrage * 8) : convertit le nombre d'octets de bourrage en nombre de bits
 		int [] resultat = new int [bitsOriginal];  /// tableau qui contiendra le message original
 		// Permet de copier uniquement les bits du message original dans resultat
-		for (int i = 0; i < bits.length; i++) {
+		for (int i = 0; i < bitsOriginal; i++) {
 		    resultat[i] = bits[i]; // copie les bits du message original
 		}
 	    return resultat;
