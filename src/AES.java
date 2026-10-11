@@ -42,7 +42,7 @@ public class AES {
 	/*
 	 * Permmet de transformer une chaine de caractere en un tableau d'entier (0 et 1)
 	 */
-	private int [] stringToBits(String message) {
+	public int [] stringToBits(String message) {
 		byte [] bytes = message.getBytes(StandardCharsets.UTF_8);  // recupere les octets du mess et les mets sous forme de tableau
 		int[] bits = new int[bytes.length * 8];  //chaque octet contient 8 bits donc il nous faut la taille du mot *8 cases dans notre tableau
 		// Parcourt tous les octets du message
@@ -101,7 +101,7 @@ public class AES {
 	 * Permet d'ajouter un bourrage pour que la taille du message soit un multiple de 128 bits
 	 * Chaque octet ajouté vaut le nombre d'octets ajoutés, ce qui permet plus tard au débourrage de savoir combien en retirer
 	 */
-	private int [] bourrage(int[] bits) {
+	public int [] bourrage(int[] bits) {
 		int reste = bits.length % 128;
 		int bitsAAjouter = 128 - reste;  // calcule combien de bits il faut ajouter pour atteindre le prochain multiple de 128
 		int octetsAjouter = bitsAAjouter / 8; // 1 octet = 8 bits donc on transforme le nombre de bits a ajouter en nombre d'octets
@@ -139,12 +139,41 @@ public class AES {
 		}
 		// Taille du message sans le bourrage
 		int bitsOriginal = bits.length - (valeurBourrage * 8);  // (valeurBourrage * 8) : convertit le nombre d'octets de bourrage en nombre de bits
-		int [] resultat = new int [bitsOriginal];  /// tableau qui contiendra le message original
+		int [] resultat = new int [bitsOriginal];  // tableau qui contiendra le message original
 		// Permet de copier uniquement les bits du message original dans resultat
 		for (int i = 0; i < bitsOriginal; i++) {
 		    resultat[i] = bits[i]; // copie les bits du message original
 		}
 	    return resultat;
+		
+	}
+	
+	
+	/*
+	 * Permet de découper le tableau de bits total (message binaire) en un ensemble de blocs (matrices State 4x4)
+	 */
+	public int [][][] decoupage_en_blocs(int [] bitsTotal) {
+		int nombre_blocs = bitsTotal.length/128;  // calcule le nombre de blocs de 128 bits
+		int [][][] bloc = new int [nombre_blocs][4][4]; //tabl contenant tous les blocs
+		int indexBit = 0;
+		// Parcourt les blocs
+		for (int b=0; b<nombre_blocs;b++) {
+			// Pour chaque bloc on construit la matrice State 4x4 par colonnes
+			for (int j = 0; j<4; j++) {  //colonnes
+				for (int i = 0; i<4; i++) { // lignes
+					// on lit un octet (8 bits) a partir de bitsTotal
+					int resultat = 0;
+					for (int k = 0; k<8; k++) {
+						resultat = (resultat <<1) | bitsTotal[indexBit];
+						indexBit++;
+					}
+					bloc[b][i][j] = resultat;
+				}
+				
+				
+			}
+		}
+		return bloc;
 		
 	}
 	
