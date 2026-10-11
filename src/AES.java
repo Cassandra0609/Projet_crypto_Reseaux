@@ -154,23 +154,23 @@ public class AES {
 	 */
 	public int [][][] decoupage_en_blocs(int [] bitsTotal) {
 		int nombre_blocs = bitsTotal.length/128;  // calcule le nombre de blocs de 128 bits
-		int [][][] bloc = new int [nombre_blocs][4][4]; //tabl contenant tous les blocs
-		int indexBit = 0;
-		// Parcourt les blocs
+		//tabl contenant tous les blocs
+		int [][][] bloc = new int [nombre_blocs][4][4]; // // chaque case de la matrice contiendra un octet représenté par un entier compris entre 0 et 255
+		int indexBit = 0; // indique la position du prochain bit à lire dans le tableau bitsTotal.
+		// Parcourt tous les blocs à construire
 		for (int b=0; b<nombre_blocs;b++) {
 			// Pour chaque bloc on construit la matrice State 4x4 par colonnes
 			for (int j = 0; j<4; j++) {  //colonnes
 				for (int i = 0; i<4; i++) { // lignes
 					// on lit un octet (8 bits) a partir de bitsTotal
-					int resultat = 0;
+					int resultat = 0;  // initialise la valeur de l'octet à reconstruire
+					// Parcourt les 8 bits de l'octet actuel
 					for (int k = 0; k<8; k++) {
-						resultat = (resultat <<1) | bitsTotal[indexBit];
+						resultat = (resultat <<1) | bitsTotal[indexBit]; // decale les bits deja lus d'une position vers la gauche, puis ajoute le bit actuel
 						indexBit++;
 					}
-					bloc[b][i][j] = resultat;
+					bloc[b][i][j] = resultat;  // place l'octet reconstruit dans la matrice
 				}
-				
-				
 			}
 		}
 		return bloc;
