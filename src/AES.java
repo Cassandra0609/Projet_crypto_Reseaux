@@ -264,9 +264,21 @@ public class AES {
 	
 	
 	/*
-	 * private subByte
+	 * Permet de parcourir les octets de l'etat AES et remplacer chacun par la valeur correspondante dans sBox
 	 */
-	
+	private int [][] subByte (int [][] state){
+		int [][] newState = new int[4][4];
+		for (int i=0; i<4; i++) {
+			for (int j=0; j<4; j++) {
+				int octet = state[i][j]; // recupere l'octet state[i][j]
+	            // Calcule la ligne et la colonne dans sBox
+				int ligne = (octet >> 4) & 0x0F;  // extrait les 4 bits de poids fort pour la ligne
+				int colonne = octet & 0x0F ;  // extrait les 4 bits de poids faible pour la colonne
+				newState[i][j] = sBox[ligne][colonne];  // range la valeur substituée dans newState, state n'est donc pas modifié
+			}
+		}
+		return newState;
+	}
 	
 	
 	
