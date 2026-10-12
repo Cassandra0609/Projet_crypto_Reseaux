@@ -149,6 +149,41 @@ public class TestAES {
 	    String phrase = "Bonjour tout le monde é à ç";
 	    int[] bits8 = aes.recollage_des_blocs(aes.decoupage_en_blocs(aes.bourrage(aes.stringToBits(phrase))));
 	    System.out.println(aes.bitsToString(aes.debourrage(bits8)).equals(phrase));
+	    
+	    System.out.println();
+	    
+	    
+	    
+	    /*
+		 * Tests pour la huitieme method xor
+		 */
+	    System.out.println("Test methode 8 : ");
+        System.out.println();
+	    //Test1 -> Tableau de meme longueur non null
+	    int[] tab1 = {1, 0, 1, 1};
+	    int[] tab2 = {0, 0, 1, 0};
+	    int[] resultat8 = aes.xor(tab1, tab2);
+	    System.out.println(Arrays.toString(resultat8));
+	    System.out.println();
+	    
+	    //Test2 -> Tableau de longueur differentes et non null
+	    int [] tab3 = {1, 0, 1, 0} ;
+	    int [] tab4 = {1, 0};
+	    int[] resultat9 = aes.xor(tab3, tab4);
+	    System.out.println(Arrays.toString(resultat9));
+	    
+	    //Test3 -> Tableau de meme longueur differentes vide
+	    int [] tab5 = {} ;
+	    int [] tab6 = {};
+	    int[] resultat10 = aes.xor(tab5, tab6);
+	    System.out.println(Arrays.toString(resultat10));
+	    
+	    System.out.println();
+	    
+	    
+	    
+	    
+	    
 	}
 	
 
