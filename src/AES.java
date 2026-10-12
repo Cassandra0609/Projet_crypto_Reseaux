@@ -266,7 +266,7 @@ public class AES {
 	/*
 	 * Permet de parcourir les octets de l'etat AES et remplacer chacun par la valeur correspondante dans sBox
 	 */
-	private int [][] subByte (int [][] state){
+	public int [][] subByte (int [][] state){
 		int [][] newState = new int[4][4];
 		for (int i=0; i<4; i++) {
 			for (int j=0; j<4; j++) {

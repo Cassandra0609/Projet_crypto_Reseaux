@@ -10,7 +10,6 @@ public class TestAES {
 		 * Tests pour la première méthode stringToBits
 		 */
         System.out.println("Test methode 1 : ");
-        System.out.println();
 		String message1 = "A";
         int[] bits1 = aes.stringToBits(message1);
         System.out.print("Message : " + message1 + " -> Bits : " + Arrays.toString(bits1));
@@ -26,14 +25,14 @@ public class TestAES {
         String message3 = "Bonjour";
         int[] bits3 = aes.stringToBits(message3);
         System.out.print("Message : " + message3 + " -> Bits : " + Arrays.toString(bits3));
-		 
-		 		
+        System.out.println();
+        System.out.println();
+        
 		
 		/*
 		 * Tests pour la deuxieme method bitsToString 
 		 */
         System.out.println("Test methode 2 : ");
-        System.out.println();
 		String message4 = "Bonjour";
 
 		int[] bits4 = aes.stringToBits(message2);
@@ -53,7 +52,6 @@ public class TestAES {
 		 * Tests pour la troisieme method genereMasterKey 
 		 */
 		System.out.println("Test methode 3 : ");
-        System.out.println();
 		int[][] cle = aes.genereMasterKey();
 		for (int[] ligne : cle) {
 		    for (int v : ligne) {
@@ -70,9 +68,7 @@ public class TestAES {
 		 * Tests pour la quatrieme method bourrage 
 		 */
 		System.out.println("Test methode 4 : ");
-        System.out.println();
-		
-        String messageB = "Bonjour";
+		String messageB = "Bonjour";
 		int[] bitsB = aes.stringToBits(messageB);
 		int[] bitsBourrage = aes.bourrage(bitsB);
 		System.out.println("Taille avant : " + bitsB.length);
@@ -87,8 +83,6 @@ public class TestAES {
 		 * Tests pour la cinquieme method debourrage (les 2 methodes combinés)
 		 */
 		System.out.println("Test methode 5 : ");
-        System.out.println();
-        
 		String message5 = "Bonjour";
 		int[] bits5 = aes.stringToBits(message5);
 		int[] bitsBourres = aes.bourrage(bits5);
@@ -106,7 +100,6 @@ public class TestAES {
 		 * Tests pour la sixieme method decoupage_en_blocs
 		 */
 		System.out.println("Test methode 6 : ");
-        System.out.println();
 		// Test1 -> Un bloc avec "A"
 		int[][][] blocs = aes.decoupage_en_blocs(aes.bourrage(aes.stringToBits("A")));
 	    System.out.println("Nombre de blocs : " + blocs.length);   // attendu : 1
@@ -138,7 +131,6 @@ public class TestAES {
 		 * Tests pour la septieme method recollage_des_blocs
 		 */
 	    System.out.println("Test methode 7 : ");
-        System.out.println();
 	    int[] bits7 = aes.stringToBits("Bonjour");
 	    int[] bitsAvecBourrage = aes.bourrage(bits7);
 	    int[][][] blocs7 = aes.decoupage_en_blocs(bitsAvecBourrage);
@@ -158,7 +150,6 @@ public class TestAES {
 		 * Tests pour la huitieme method xor
 		 */
 	    System.out.println("Test methode 8 : ");
-        System.out.println();
 	    //Test1 -> Tableau de meme longueur non null
 	    int[] tab1 = {1, 0, 1, 1};
 	    int[] tab2 = {0, 0, 1, 0};
@@ -194,6 +185,22 @@ public class TestAES {
 	    System.out.println(AES.sBox[5][3]);   // 237
 	    
 	    
+	    System.out.println();
+	    
+	    
+	    
+	    /*
+	     * Test pour la neuvieme method subByte
+	     */
+	    System.out.println("Test methode 9 : ");
+	    int[][] s = {{0,1,2,3},{4,5,6,7},{8,9,10,11},{12,13,14,15}};
+	    int[][] t = aes.subByte(s);
+	    System.out.println(t[0][0]);
+	    System.out.println(t[0][1]);
+	    System.out.println(s[0][0]);
+	    
+	    
+        System.out.println();
 	}
 	
 
