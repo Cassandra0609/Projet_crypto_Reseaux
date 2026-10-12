@@ -165,7 +165,7 @@ public class TestAES {
 	    int[] resultat8 = aes.xor(tab1, tab2);
 	    System.out.println(Arrays.toString(resultat8));
 	    System.out.println();
-	    
+	    /*
 	    //Test2 -> Tableau de longueur differentes et non null
 	    int [] tab3 = {1, 0, 1, 0} ;
 	    int [] tab4 = {1, 0};
@@ -177,11 +177,21 @@ public class TestAES {
 	    int [] tab6 = {};
 	    int[] resultat10 = aes.xor(tab5, tab6);
 	    System.out.println(Arrays.toString(resultat10));
-	    
+	    */
 	    System.out.println();
 	    
 	    
-	    
+	    /*
+	     * Test des 2 tables sBox et sBoxInv
+	     */
+	    System.out.println("Test tables sBox et sBoxInv : ");
+	    boolean ok = true;
+	    for (int x = 0; x < 256; x++) {
+	        int s = AES.sBox[x >> 4][x & 15];
+	        if (AES.sBoxInv[s >> 4][s & 15] != x) ok = false;
+	    }
+	    System.out.println(ok);   // true
+	    System.out.println(AES.sBox[5][3]);   // 237
 	    
 	    
 	}
