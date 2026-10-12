@@ -61,7 +61,7 @@ public class AES {
 	/*
 	 * Permet de transforer un tableau d'entier (0 et1) en chaine de caractere
 	 */
-	private String bitsToString(int[] blocs) {
+	public String bitsToString(int[] blocs) {
 		int nombrebytes = blocs.length / 8;   // 8 bits correspondent à 1 octet
 		byte [] bytes = new byte [nombrebytes]; //tab qui va contenir les octets reconstruits
 		// Parcourt chaque octet que l'on doit reconstruire
@@ -80,7 +80,7 @@ public class AES {
 	/*
 	 * Permet de generer une cle maitre aleatoire de taille choisie (128 ou 192 ou 256)
 	 */
-	private int [][] genereMasterKey() {
+	public int [][] genereMasterKey() {
 		int lignes = 4; // la matrice de l'AES a toujours 4 lignes (4 octets par mot de cle)
 		int colonnes = this.taille_cle_maitre/32;  // 1 mot = 32 bits donc le nombre de colonnes dépend de la taille de la cle
 		int [][] cle = new int [lignes][colonnes]; // Cree la matrice de la cle maitre
@@ -131,7 +131,7 @@ public class AES {
 	/*
 	 * Permet de retirer le bourrage ajouté à la fin du message pour retrouver le message original en bits
 	 */
-	private int [] debourrage(int[] bits) {
+	public int [] debourrage(int[] bits) {
 		int valeurBourrage = 0 ;   // contient la valeur décimale du dernier octet
 		// Parcourt les 8 derniers bits du tableau
 		for (int i = bits.length - 8; i < bits.length; i++) {
@@ -163,17 +163,45 @@ public class AES {
 			for (int j = 0; j<4; j++) {  //colonnes
 				for (int i = 0; i<4; i++) { // lignes
 					// on lit un octet (8 bits) a partir de bitsTotal
-					int resultat = 0;  // initialise la valeur de l'octet à reconstruire
+					int octet = 0;  // initialise la valeur de l'octet à reconstruire
 					// Parcourt les 8 bits de l'octet actuel
 					for (int k = 0; k<8; k++) {
-						resultat = (resultat <<1) | bitsTotal[indexBit]; // decale les bits deja lus d'une position vers la gauche, puis ajoute le bit actuel
+						octet = (octet <<1) | bitsTotal[indexBit]; // decale les bits deja lus d'une position vers la gauche, puis ajoute le bit actuel
 						indexBit++;
 					}
-					bloc[b][i][j] = resultat;  // place l'octet reconstruit dans la matrice
+					bloc[b][i][j] = octet;  // place l'octet reconstruit dans la matrice
 				}
 			}
 		}
 		return bloc;
+		
+	}
+	
+	
+	
+	/*
+	 * Permet de réassembler un ensemble de blocs (matrices State) en un seul tableau de bits total
+	 */
+	public int [] recollage_des_blocs(int [][][] blocs) {
+		int totalBits = blocs.length * 128;  // calcule le nombre total de bits : 128 bits par bloc
+		int [] blocTotal = new int [totalBits];   // tableau qui contiendra tous les bits
+		int indexBit = 0; // indique la position du prochain bit à ecrire
+		// Parcourt tous les blocs
+		for (int b=0; b<blocs.length;b++) {
+			// Parcourt la matrice State 4x4 par colonnes
+			for (int j = 0; j<4; j++) {  //colonnes
+				for (int i = 0; i<4; i++) { // lignes
+					int octet = blocs[b][i][j];  // recupere l'octet de la matrice
+					// Extrait les 8 bits de l'octet pour les replacer dans le tableau global
+					for (int k = 7; k>=0 ; k--) {
+						int bit = (octet >> k) & 1;
+						blocTotal[indexBit] = bit;
+						indexBit++;
+					}
+				}
+			}
+		}
+		return blocTotal;
 		
 	}
 	
