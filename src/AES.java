@@ -206,6 +206,34 @@ public class AES {
 	}
 	
 	
+	/*
+	 * Realise le XOR entre tab1 et tab2	
+	 */
+	private int[] xor(int[] tab1, int[] tab2 ) {
+		// Verifie qu'aucun des deux tableaux n'est null
+		if (tab1 == null || tab2 == null) {
+		    throw new IllegalArgumentException("Les tableaux ne doivent pas être null");
+		}
+		// Verifie que les deux tableaux ont la meme longueur
+		if (tab1.length != tab2.length) {
+		    throw new IllegalArgumentException("Les tableaux doivent avoir la même longueur");
+		}
+		int [] resultat = new int [tab1.length];
+		// Parcourt toutes les positions des tableaux
+		for (int i = 0; i<tab1.length; i++) {
+			resultat[i] = tab1[i] ^ tab2[i];   // effectue le XOR entre les elements de meme position
+		}
+		return resultat;
+	}
+	
+	
+	
+	
+	/*
+	 * private subByte
+	 */
+	
+	
 	
 	
 	/*
