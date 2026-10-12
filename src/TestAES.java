@@ -8,7 +8,7 @@ public class TestAES {
 		
 		/*
 		 * Tests pour la première méthode stringToBits
-		 
+		 */
 		String message1 = "A";
         int[] bits1 = aes.stringToBits(message1);
         System.out.print("Message : " + message1 + " -> Bits : " + Arrays.toString(bits1));
@@ -24,12 +24,12 @@ public class TestAES {
         String message3 = "Bonjour";
         int[] bits3 = aes.stringToBits(message3);
         System.out.print("Message : " + message3 + " -> Bits : " + Arrays.toString(bits3));
-		 */
+		 
 		 		
 		
 		/*
 		 * Tests pour la deuxieme method bitsToString 
-		 
+		 */
 		String message = "Bonjour";
 
 		int[] bits = aes.stringToBits(message);
@@ -42,12 +42,12 @@ public class TestAES {
 		System.out.println("Message après conversion : " + resultat);
 		
 		System.out.println();
-		*/
+		
 		
 		
 		/*
 		 * Tests pour la troisieme method genereMasterKey 
-		 
+		 */
 		int[][] cle = aes.genereMasterKey();
 		for (int[] ligne : cle) {
 		    for (int v : ligne) {
@@ -56,12 +56,12 @@ public class TestAES {
 		    System.out.println();
 		}
 		
-		*/
+		
 		
 		
 		/*
 		 * Tests pour la quatrieme method bourrage 
-		 
+		 */
 		String messageB = "Bonjour";
 
 		int[] bitsB = aes.stringToBits(messageB);
@@ -69,12 +69,12 @@ public class TestAES {
 
 		System.out.println("Taille avant : " + bitsB.length);
 		System.out.println("Taille après : " + bitsBourrage.length);
-		*/
+		
 		
 		
 		/*
 		 * Tests pour la cinquieme method debourrage (les 2 methodes combinés)
-		 
+		 */
 		String message = "Bonjour";
 
 		int[] bits = aes.stringToBits(message);
@@ -85,7 +85,7 @@ public class TestAES {
 		System.out.println(bitsBourres.length);
 		System.out.println(bitsOriginaux.length);
 		System.out.println(aes.bitsToString(bitsOriginaux));
-		*/
+		
 		
 		
 		/*
