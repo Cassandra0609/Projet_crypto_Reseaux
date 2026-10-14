@@ -262,7 +262,6 @@ public class AES {
 	
 	
 	
-	
 	/*
 	 * Permet de parcourir les octets de l'etat AES et remplacer chacun par la valeur correspondante dans sBox
 	 */
