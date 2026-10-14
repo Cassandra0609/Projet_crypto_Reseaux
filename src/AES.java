@@ -173,18 +173,22 @@ public class AES {
 	 * @return le message orignal sans le bourrage 
 	 */
 	public int [] debourrage(int[] bits) {
-		int valeurBourrage = 0 ;   // contient la valeur décimale du dernier octet
-		// Parcourt les 8 derniers bits du tableau
-		for (int i = bits.length - 8; i < bits.length; i++) {
-			valeurBourrage = (valeurBourrage << 1) | bits[i] ; // reconstruit la valeur du dernier octet bit après bit
-		}
-		// Taille du message sans le bourrage
-		int bitsOriginal = bits.length - (valeurBourrage * 8);  // (valeurBourrage * 8) : convertit le nombre d'octets de bourrage en nombre de bits
-		int [] resultat = new int [bitsOriginal];  // tableau qui contiendra le message original
-		// Permet de copier uniquement les bits du message original dans resultat
-		for (int i = 0; i < bitsOriginal; i++) {
-		    resultat[i] = bits[i]; // copie les bits du message original
-		}
+		int i = bits.length - 1 ;   // part du dernier bit du tableau
+		// Ignore les 0 ajoutes a la fin
+	    while (i >= 0 && bits[i] == 0) {
+	        i--;
+	    }
+	    // Verifie qu'on a trouvé le marqueur 1
+	    if (i < 0) {
+	        throw new IllegalArgumentException("Marqueur de bourrage absent");
+	    }
+	    
+	    // Le marqueur se trouve à la position i
+	    // On garde uniquement les bits qui le précèdent
+	    int[] resultat = new int[i];
+	    for (int j = 0; j < i; j++) {
+	        resultat[j] = bits[j];
+	    }
 	    return resultat;
 		
 	}
