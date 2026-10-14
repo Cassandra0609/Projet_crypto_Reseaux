@@ -2,6 +2,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
+/**
+ * 
+ */
 public class AES {
 	
 	/*
@@ -54,8 +57,10 @@ public class AES {
 	private int [][] master_Key;
 	private int [][] keys;
 	
-	/*
+	/**
 	 * Constructor
+	 * 
+	 * @param tcl  (128,192,256)
 	 */
 	public AES(int tcl) {
 		this.taille_cle_maitre = tcl;
@@ -73,8 +78,11 @@ public class AES {
 	}
 	
 	
-	/*
+	/**
 	 * Permmet de transformer une chaine de caractere en un tableau d'entier (0 et 1)
+	 * 
+	 * @param message
+	 * @return
 	 */
 	public int [] stringToBits(String message) {
 		byte [] bytes = message.getBytes(StandardCharsets.UTF_8);  // recupere les octets du mess et les mets sous forme de tableau
@@ -92,8 +100,11 @@ public class AES {
 	}
 	
 	
-	/*
+	/**
 	 * Permet de transforer un tableau d'entier (0 et1) en chaine de caractere
+	 * 
+	 * @param blocs
+	 * @return
 	 */
 	public String bitsToString(int[] blocs) {
 		int nombrebytes = blocs.length / 8;   // 8 bits correspondent à 1 octet
@@ -111,8 +122,10 @@ public class AES {
 	}
 	
 	
-	/*
+	/**
 	 * Permet de generer une cle maitre aleatoire de taille choisie (128 ou 192 ou 256)
+	 * 
+	 * @return
 	 */
 	public int [][] genereMasterKey() {
 		int lignes = 4; // la matrice de l'AES a toujours 4 lignes (4 octets par mot de cle)
@@ -131,9 +144,12 @@ public class AES {
 	}
 	
 
-	/*
+	/**
 	 * Permet d'ajouter un bourrage pour que la taille du message soit un multiple de 128 bits
 	 * Chaque octet ajouté vaut le nombre d'octets ajoutés, ce qui permet plus tard au débourrage de savoir combien en retirer
+	 *
+	 * @param bits
+	 * @return
 	 */
 	public int [] bourrage(int[] bits) {
 		int reste = bits.length % 128;
@@ -149,8 +165,12 @@ public class AES {
 	}
 	
 	
-	/*
+	
+	/**
 	 * Permet de retirer le bourrage ajouté à la fin du message pour retrouver le message original en bits
+	 * 
+	 * @param bits
+	 * @return
 	 */
 	public int [] debourrage(int[] bits) {
 		int valeurBourrage = 0 ;   // contient la valeur décimale du dernier octet
@@ -170,8 +190,11 @@ public class AES {
 	}
 	
 	
-	/*
+	/**
 	 * Permet de découper le tableau de bits total (message binaire) en un ensemble de blocs (matrices State 4x4)
+	 * 
+	 * @param bitsTotal
+	 * @return
 	 */
 	public int [][][] decoupage_en_blocs(int [] bitsTotal) {
 		int nombre_blocs = bitsTotal.length/128;  // calcule le nombre de blocs de 128 bits
@@ -200,8 +223,11 @@ public class AES {
 	
 	
 	
-	/*
+	/**
 	 * Permet de réassembler un ensemble de blocs (matrices State) en un seul tableau de bits total
+	 * 
+	 * @param blocs
+	 * @return
 	 */
 	public int [] recollage_des_blocs(int [][][] blocs) {
 		int totalBits = blocs.length * 128;  // calcule le nombre total de bits : 128 bits par bloc
@@ -227,8 +253,12 @@ public class AES {
 	}
 	
 	
-	/*
+	/**
 	 * Realise le XOR entre tab1 et tab2	
+	 * 
+	 * @param tab1
+	 * @param tab2
+	 * @return
 	 */
 	public int[] xor(int[] tab1, int[] tab2 ) {
 		// Verifie qu'aucun des deux tableaux n'est null
@@ -249,8 +279,11 @@ public class AES {
 	
 	
 	
-	/*
+	/**
 	 * Permet de parcourir les octets de l'etat AES et remplacer chacun par la valeur correspondante dans sBox
+	 * 
+	 * @param state
+	 * @return
 	 */
 	public int [][] subByte (int [][] state){
 		int [][] newState = new int[4][4];
@@ -267,9 +300,11 @@ public class AES {
 	}
 	
 	
-	
-	/*
+
+	/**
 	 * Permet de generer les cles de rondes
+	 * 
+	 * @return
 	 */
 	private int createKeys() {
 		return 0;
