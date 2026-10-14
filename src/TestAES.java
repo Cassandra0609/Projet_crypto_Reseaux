@@ -74,8 +74,10 @@ public class TestAES {
 		String messageB = "Bonjour";
 		int[] bitsB = aes.stringToBits(messageB);
 		int[] bitsBourrage = aes.bourrage(bitsB);
-		System.out.println("Taille avant : " + bitsB.length);         //Taille avant : 56
-		System.out.println("Taille après : " + bitsBourrage.length); // Taille après : 128
+		System.out.println("Taille avant : " + bitsB.length);             // Taille avant : 56
+		System.out.println("Bits original : " + Arrays.toString(bits4));  // [0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0]
+		System.out.println("Taille après : " + bitsBourrage.length);           // Taille après : 128
+		System.out.println("Bits bourrés : " + Arrays.toString(bitsBourrage)); // [0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1]
 		
 		
 		System.out.println();

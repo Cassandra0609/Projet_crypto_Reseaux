@@ -138,27 +138,14 @@ public class AES {
 	public int [] bourrage(int[] bits) {
 		int reste = bits.length % 128;
 		int bitsAAjouter = 128 - reste;  // calcule combien de bits il faut ajouter pour atteindre le prochain multiple de 128
-		int octetsAjouter = bitsAAjouter / 8; // 1 octet = 8 bits donc on transforme le nombre de bits a ajouter en nombre d'octets
 		int [] resultat = new int [bits.length + bitsAAjouter]; // tab qui contiendra le message + le bourrage
 		// Parcourt tous les bits du message original
 		for (int i = 0; i < bits.length; i++) {
 		    resultat[i] = bits[i]; // copie les bits du message original
 		}
-		int [] valeurBinaire = new int [8]; // écriture binaire de octetsAjouter -> sert d'octet de bourrage
-		// Parcourt les 8 positions possibles d'un octet
-		// Extrait chaque bit de octetsAjouter, du poids fort au poids faible
-		for (int j  = 7; j >= 0; j--) {
-		        valeurBinaire[7-j] = (octetsAjouter >> j) & 1 ;
-		}
-		// Ajoute la valeur de bourrage autant de fois qu'il y a d'octets a ajouter
-		for (int i = 0; i < octetsAjouter; i++) {
-			// Permet de copier les 8 bits de valeurBinaire dans resultat
-	        for (int j = 0; j < 8; j++) {
-	            resultat[bits.length + i * 8 + j] = valeurBinaire[j];  // calcule la position où placer le bit
-	        }
-	    }
-	    return resultat;
-		
+		resultat[bits.length] = 1;  // marqueur de fin du message
+		// Les autres cases sont automatiquement remplies de 0
+		return resultat;	
 	}
 	
 	
