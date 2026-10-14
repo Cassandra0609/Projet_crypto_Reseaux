@@ -144,7 +144,7 @@ public class AES {
 		    resultat[i] = bits[i]; // copie les bits du message original
 		}
 		resultat[bits.length] = 1;  // marqueur de fin du message
-		// Les autres cases sont automatiquement remplies de 0
+		// Les autres cases sont automatiquement remplies de 0 car qaund on crée un tab d'entiers avec new int[...], toutes ses cases sont initialisées à 0
 		return resultat;	
 	}
 	
