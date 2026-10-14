@@ -82,7 +82,7 @@ public class AES {
 	 * Permmet de transformer une chaine de caractere en un tableau d'entier (0 et 1)
 	 * 
 	 * @param message
-	 * @return
+	 * @return le tab de bits representant le message
 	 */
 	public int [] stringToBits(String message) {
 		byte [] bytes = message.getBytes(StandardCharsets.UTF_8);  // recupere les octets du mess et les mets sous forme de tableau
@@ -104,7 +104,7 @@ public class AES {
 	 * Permet de transforer un tableau d'entier (0 et1) en chaine de caractere
 	 * 
 	 * @param blocs
-	 * @return
+	 * @return la chaine de caractere representant le blocs en bits
 	 */
 	public String bitsToString(int[] blocs) {
 		int nombrebytes = blocs.length / 8;   // 8 bits correspondent à 1 octet
@@ -125,7 +125,7 @@ public class AES {
 	/**
 	 * Permet de generer une cle maitre aleatoire de taille choisie (128 ou 192 ou 256)
 	 * 
-	 * @return
+	 * @return la cle
 	 */
 	public int [][] genereMasterKey() {
 		int lignes = 4; // la matrice de l'AES a toujours 4 lignes (4 octets par mot de cle)
@@ -149,7 +149,7 @@ public class AES {
 	 * Chaque octet ajouté vaut le nombre d'octets ajoutés, ce qui permet plus tard au débourrage de savoir combien en retirer
 	 *
 	 * @param bits
-	 * @return
+	 * @return le tableau contennat le message original en bits + le bourrage
 	 */
 	public int [] bourrage(int[] bits) {
 		int reste = bits.length % 128;
@@ -170,7 +170,7 @@ public class AES {
 	 * Permet de retirer le bourrage ajouté à la fin du message pour retrouver le message original en bits
 	 * 
 	 * @param bits
-	 * @return
+	 * @return le message orignal sans le bourrage 
 	 */
 	public int [] debourrage(int[] bits) {
 		int valeurBourrage = 0 ;   // contient la valeur décimale du dernier octet
@@ -258,7 +258,7 @@ public class AES {
 	 * 
 	 * @param tab1
 	 * @param tab2
-	 * @return
+	 * @return le resultat du xor des 2 tab passés en param
 	 */
 	public int[] xor(int[] tab1, int[] tab2 ) {
 		// Verifie qu'aucun des deux tableaux n'est null
