@@ -277,7 +277,7 @@ public class AES {
 	 * @param tab2
 	 * @return Le resultat du xor des 2 tab passés en param
 	 */
-	public int[] xor(int[] tab1, int[] tab2 ) {
+	public int [] xor(int[] tab1, int[] tab2 ) {
 		// Verifie qu'aucun des deux tableaux n'est null
 		if (tab1 == null || tab2 == null) {
 		    throw new IllegalArgumentException("Les tableaux ne doivent pas être null");
@@ -345,6 +345,7 @@ public class AES {
 	 * @return Un nouveau mot avec les octets décalés
 	 */
 	public int [] rotWord (int [] mot) {
+		 // Verifie que mot n'est pas null et contient exactement 4 octets
 		if (mot == null || mot.length != 4) {
 			throw new IllegalArgumentException("Un mot doit contenir exactement 4 octets");
 		}
@@ -354,7 +355,34 @@ public class AES {
 		resultat[2] = mot[3];
 		resultat[3] = mot[0];
 		return resultat;
-		
+	}
+	
+	
+	/**
+	 * Applique la S-box sur les 4 octets d'un mot.
+	 * 
+	 * @param mot Le mot de 4 octets
+	 * @return Un nouveau mot transformé par la S-box
+	 */
+	private int [] subWord(int []mot) {
+		 // Verifie que mot n'est pas null et contient exactement 4 octets
+		if (mot == null || mot.length != 4) {
+	        throw new IllegalArgumentException("Un mot doit contenir exactement 4 octets.");
+	    }
+		int[] resultat = new int[4];
+		 // ParcourT les quatre octets 
+		for (int i=0; i<4; i++) {
+			int octet = mot[i];
+			// Verifie que l'octet est bien un octet valide (entre 0 et 255)
+			if (octet < 0 || octet > 255) {
+			    throw new IllegalArgumentException("Chaque octet doit être compris entre 0 et 255");
+			}
+			int ligne = octet / 16;  // divise l'octet par 16 pour obtenir la ligne de la S-Box
+			int colonne = octet % 16 ;  // calcule le reste de la division par 16 pour obtenir la colonne de la S-Box
+			// Calcule la ligne et la colonne dans sBox
+			resultat[i] = sBox[ligne][colonne];  // range la valeur substituée dans newState, state n'est donc pas modifié	
+		}
+		return resultat;
 	}
 	
 	
