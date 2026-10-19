@@ -394,20 +394,27 @@ public class AES {
 	 * 
 	 * @param masterKey La matrice de la clé maître (4 lignes, et Nk colonnes : 4, 6 ou 8).
 	 * @return Un tableau de matrices 4x4 représentant les clés pour chaque ronde
+	 * @throws IllegalArgumentException si la clé maître est nulle, si ses
+	 *         dimensions sont incorrectes ou si un octet n'est pas compris
+	 *         entre 0 et 255.
+	 * @throws IllegalStateException si une constante Rcon nécessaire est absente.
 	 */
 	private int [][][] createKeys(int [][] masterKey) {
 		// Verifie que masterKey n'est pas null et contient bien 4 lignes
 		if (masterKey == null || masterKey.length != 4) {
 		    throw new IllegalArgumentException("La clé maître doit contenir exactement 4 lignes");
 		}
-		// Verifie chaque ligne pour s'assurer qu'elle n'est pas null et fait bien 4 colonnes
+		// Verifie que chaque ligne existe et possède le nombre de colonnes attendu.
 		for (int i = 0; i < 4; i++) {
 		    if (masterKey[i] == null || masterKey[i].length != taille_cle_maitre / 32) {
 		    	throw new IllegalArgumentException("La clé maître doit avoir 4 lignes et Nk colonnes");
 		    }
 		}
+		// Nk représente le nombre de mots de 32 bits dans la clé maître. Chaque mot contient 4 octets soit 32 bits
 		int Nk = taille_cle_maitre / 32;
-		keys = new int[4][4 * (nb_ronde + 1)];
+		// matrice qui contiendra tous les mots de la clé étendue
+	    keys = new int[4][4 * (nb_ronde + 1)];
+	    // Copie les mots de la clé maître au début de la clé étendue
 		for (int i = 0; i < 4; i++) {
 		    for (int j = 0; j < Nk; j++) {
 		        int octet = masterKey[i][j];
@@ -418,30 +425,39 @@ public class AES {
 				keys[i][j] = octet;
 		    }
 		}
-		for (int j = Nk; j < 4*(nb_ronde + 1); j++) {
-			int [] temp = new int [4];
+		// Calcule les mots suivants de la clé étendue à partir des mots déjà calculés, jusqu'à obtenir toutes les clés nécessaires
+	    for (int j = Nk; j < 4*(nb_ronde + 1); j++) {
+	    	// Récupère le mot précédent qui est composé de 4 octets
+	        int [] temp = new int [4];
 			temp[0] = keys[0][j - 1];
 			temp[1] = keys[1][j - 1];
 			temp[2] = keys[2][j - 1];
 			temp[3] = keys[3][j - 1];
 			if (j % Nk == 0) {
 				temp = subWord(rotWord(temp));
+				// Vérifie que la constante Rcon nécessaire existe
 				if (j / Nk >= Rcon.length) {
 				    throw new IllegalStateException("Constante Rcon manquante");
 				}
+				// Applique la constante de ronde au premier octet du mot
 				temp[0] ^= Rcon[j / Nk];
-			}else if (Nk == 8 && (j % Nk == 4)) {
+			// Cas particulier de l'AES-256 : une substitution supplémentaire est appliquée lorsque Nk vaut 8 et que l'indice du mot est congru à 4 modulo Nk
+		    }else if (Nk == 8 && (j % Nk == 4)) {
 				temp = subWord(temp);
 			}
+			// Calcule le nouveau mot en faisant un XOR entre le mot situé Nk positions avant et le mot temporaire transformé
 			for (int i = 0; i < 4; i++) {
 				keys[i][j] = keys[i][j - Nk] ^ temp[i];
 			}
 		}
+	    //tableau qui contiendra les clés de toutes les rondes
 		int[][][] clesRondes = new int[nb_ronde + 1][4][4];
-		for (int r = 0; r <= nb_ronde; r++) {
+		// Parcourt toutes les clés de ronde, de la clé initiale à la dernière
+	    for (int r = 0; r <= nb_ronde; r++) {
 		    for (int i = 0; i < 4; i++) {
 		        for (int j = 0; j < 4; j++) {
-		            clesRondes[r][i][j] = keys[i][4 * r + j];
+		            clesRondes[r][i][j] = keys[i][4 * r + j]; // Recopie les 4 colonnes correspondant à cette ronde dans une matrice de 4×4
+	                
 		        }
 		    }
 		}
