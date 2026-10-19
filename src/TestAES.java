@@ -397,9 +397,83 @@ public class TestAES {
         } catch (IllegalArgumentException e) {
         	System.out.println("Test 6 : réussi");   // Test 3 : réussi
         } 
+        System.out.println();
         
         
-	}
-	
+        
+        /*
+         * Test de la dixieme methode createKey
+         */
+        System.out.println("Tests méthode 10 : ");
+        int[][] cle128 = new int[4][4];
+        int[][] cle192 = new int[4][6];
+        int[][] cle256 = new int[4][8];
 
+        int[][][] rondes128 = aes128.createKeys(cle128);
+        int[][][] rondes192 = aes192.createKeys(cle192);
+        int[][][] rondes256 = aes256.createKeys(cle256);
+
+        System.out.println(
+            "AES-128 : " + (rondes128.length == 11 ? "Réussi" : "ÉCHEC")  // AES-128 : Réussi
+        );
+        System.out.println(
+            "AES-192 : " + (rondes192.length == 13 ? "Réussi" : "ÉCHEC")  // AES-192 : Réussi
+        );
+        System.out.println(
+            "AES-256 : " + (rondes256.length == 15 ? "Réussi" : "ÉCHEC")  // AES-256 : Réussi
+        );
+
+        // Test 2 -> vérifier les dimensions d'une clé de ronde
+        boolean dimensionsCorrectes =
+            rondes128[0].length == 4
+            && rondes128[0][0].length == 4;
+        System.out.println("Dimensions 4x4 : " + (dimensionsCorrectes ? "Réussi" : "ÉCHEC"));  // Dimensions 4x4 : Réussi
+
+        // Test 3 -> vérifier les valeurs avec une clé AES-128 de référence
+        int[][] cleReference = {
+            {0x2b, 0x28, 0xab, 0x09},
+            {0x7e, 0xae, 0xf7, 0xcf},
+            {0x15, 0xd2, 0x15, 0x4f},
+            {0x16, 0xa6, 0x88, 0x3c}
+        };
+        int[][][] rondesReference = aes128.createKeys(cleReference);
+        // Valeurs attendues pour la deuxième clé de ronde (ronde 1).
+        int[][] ronde1Attendue = {
+            {0xa0, 0x88, 0x23, 0x2a},
+            {0xfa, 0x54, 0xa3, 0x6c},
+            {0xfe, 0x2c, 0x39, 0x76},
+            {0x17, 0xb1, 0x39, 0x05}
+        };
+        boolean ronde1Correcte = Arrays.deepEquals(rondesReference[1], ronde1Attendue);
+        System.out.println("Clé de ronde AES-128 de référence : " + (ronde1Correcte ? "Réussi" : "ÉCHEC"));  // Clé de ronde AES-128 de référence : Réussi
+
+        // Test 4 -> vérifier qu'une clé maître avec de mauvaises dimensions est rejetée.
+        try {
+            aes128.createKeys(new int[4][3]);
+            System.out.println("Dimensions invalides : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Dimensions invalides : Réussi");  // Dimensions invalides : Réussi
+        } 
+
+        // Test 5 -> vérifier qu'un octet invalide est rejeté
+        try {
+            int[][] cleInvalide = new int[4][4];
+            cleInvalide[0][0] = 256;
+            aes128.createKeys(cleInvalide);
+            System.out.println("Octet invalide : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Octet invalide : Réussi");  //Octet invalide : Réussi
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    }
 }

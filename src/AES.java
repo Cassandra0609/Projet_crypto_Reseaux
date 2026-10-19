@@ -399,7 +399,7 @@ public class AES {
 	 *         entre 0 et 255.
 	 * @throws IllegalStateException si une constante Rcon nécessaire est absente.
 	 */
-	private int [][][] createKeys(int [][] masterKey) {
+	public int [][][] createKeys(int [][] masterKey) {
 		// Verifie que masterKey n'est pas null et contient bien 4 lignes
 		if (masterKey == null || masterKey.length != 4) {
 		    throw new IllegalArgumentException("La clé maître doit contenir exactement 4 lignes");
