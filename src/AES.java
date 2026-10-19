@@ -380,19 +380,69 @@ public class AES {
 			int ligne = octet / 16;  // divise l'octet par 16 pour obtenir la ligne de la S-Box
 			int colonne = octet % 16 ;  // calcule le reste de la division par 16 pour obtenir la colonne de la S-Box
 			// Calcule la ligne et la colonne dans sBox
-			resultat[i] = sBox[ligne][colonne];  // range la valeur substituée dans newState, state n'est donc pas modifié	
+			resultat[i] = sBox[ligne][colonne];  // range l’octet substitué dans le nouveau mot
 		}
 		return resultat;
 	}
 	
 	
 	/**
-	 * Permet de generer les cles de rondes
+	 * Permet de generer les cles de rondes (Key Expansion)
 	 * 
-	 * @return
+	 * @param masterKey La matrice de la clé maître (4 lignes, et Nk colonnes : 4, 6 ou 8).
+	 * @return Un tableau de matrices 4x4 représentant les clés pour chaque ronde
 	 */
-	private int createKeys() {
-		return 0;
+	private int [][][] createKeys(int [][] masterKey) {
+		// Verifie que masterKey n'est pas null et contient bien 4 lignes
+		if (masterKey == null || masterKey.length != 4) {
+		    throw new IllegalArgumentException("La clé maître doit contenir exactement 4 lignes");
+		}
+		// Verifie chaque ligne pour s'assurer qu'elle n'est pas null et fait bien 4 colonnes
+		for (int i = 0; i < 4; i++) {
+		    if (masterKey[i] == null || masterKey[i].length != taille_cle_maitre / 32) {
+		    	throw new IllegalArgumentException("La clé maître doit avoir 4 lignes et Nk colonnes");
+		    }
+		}
+		int Nk = taille_cle_maitre / 32;
+		keys = new int[4][4 * (nb_ronde + 1)];
+		for (int i = 0; i < 4; i++) {
+		    for (int j = 0; j < Nk; j++) {
+		        int octet = masterKey[i][j];
+		        // Verifie que l'octet est bien un octet valide (entre 0 et 255)
+				if (octet < 0 || octet > 255) {
+				    throw new IllegalArgumentException("Chaque octet de la clé maitre doit être compris entre 0 et 255");
+				}
+				keys[i][j] = octet;
+		    }
+		}
+		for (int j = Nk; j < 4*(nb_ronde + 1); j++) {
+			int [] temp = new int [4];
+			temp[0] = keys[0][j - 1];
+			temp[1] = keys[1][j - 1];
+			temp[2] = keys[2][j - 1];
+			temp[3] = keys[3][j - 1];
+			if (j % Nk == 0) {
+				temp = subWord(rotWord(temp));
+				if (j / Nk >= Rcon.length) {
+				    throw new IllegalStateException("Constante Rcon manquante");
+				}
+				temp[0] ^= Rcon[j / Nk];
+			}else if (Nk == 8 && (j % Nk == 4)) {
+				temp = subWord(temp);
+			}
+			for (int i = 0; i < 4; i++) {
+				keys[i][j] = keys[i][j - Nk] ^ temp[i];
+			}
+		}
+		int[][][] clesRondes = new int[nb_ronde + 1][4][4];
+		for (int r = 0; r <= nb_ronde; r++) {
+		    for (int i = 0; i < 4; i++) {
+		        for (int j = 0; j < 4; j++) {
+		            clesRondes[r][i][j] = keys[i][4 * r + j];
+		        }
+		    }
+		}
+		return clesRondes;
 	}
 	
 	
