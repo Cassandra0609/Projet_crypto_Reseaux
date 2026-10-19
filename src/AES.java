@@ -344,7 +344,7 @@ public class AES {
 	 * @param mot Le mot de 4 octets
 	 * @return Un nouveau mot avec les octets décalés
 	 */
-	private int [] rotWord (int [] mot) {
+	public int [] rotWord (int [] mot) {
 		if (mot == null || mot.length != 4) {
 			throw new IllegalArgumentException("Un mot doit contenir exactement 4 octets");
 		}

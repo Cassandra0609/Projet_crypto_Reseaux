@@ -295,6 +295,45 @@ public class TestAES {
         } catch (IllegalArgumentException e) {
             System.out.println("Test 6 : réussi");  ////Test 6 : réussi
         }
+        System.out.println();
+        
+        
+        /*
+	     * Test method subWord
+	     */
+        System.out.println("Tests de subWord :");
+
+        // Test 1 -> vérifier la rotation circulaire
+        int[] mot = {0x09, 0xCF, 0x4F, 0x3C};
+        int[] resultat11 = aes.rotWord(mot);
+        System.out.println("Test 1 : " + Arrays.toString(resultat11));  //Test 1 : [207, 79, 60, 9]
+
+        // Test 2 -> vérifier que le mot original n'est pas modifié
+        System.out.println("Test 2 : " + java.util.Arrays.toString(mot));  //Test 2 : [9, 207, 79, 60]
+
+        // Test 3 -> vérifier le rejet de null
+        try {
+            aes.rotWord(null);
+            System.out.println("Test 3 : ECHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test 3 : réussi");   //Test 3 : réussi
+        }
+
+        // Test 4 -> vérifier le rejet d'un mot trop court
+        try {
+            aes.rotWord(new int[]{0x09, 0xCF, 0x4F});
+            System.out.println("Test 4 : ECHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test 4 : réussi");   //Test 4 : réussi
+        }
+
+        // Test 5 -> vérifier le rejet d'un mot trop long
+        try {
+            aes.rotWord(new int[]{0x09, 0xCF, 0x4F, 0x3C, 0x10});
+            System.out.println("Test 5 : ECHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test 5 : réussi");   //Test 5 : réussi
+        }
 	}
 	
 
