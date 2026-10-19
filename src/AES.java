@@ -79,7 +79,7 @@ public class AES {
 	
 	
 	/**
-	 * Permmet de transformer une chaine de caractere en un tableau d'entier (0 et 1)
+	 * Permet de transformer une chaine de caractere en un tableau d'entier (0 et 1)
 	 * 
 	 * @param message
 	 * @return le tab de bits representant le message
@@ -87,13 +87,13 @@ public class AES {
 	public int [] stringToBits(String message) {
 		byte [] bytes = message.getBytes(StandardCharsets.UTF_8);  // recupere les octets du mess et les mets sous forme de tableau
 		int[] bits = new int[bytes.length * 8];  //chaque octet contient 8 bits donc il nous faut la taille du mot *8 cases dans notre tableau
+		int index = 0; // compteur pour avancer case par case dans le tableau de bits
 		// Parcourt tous les octets du message
 		for (int i = 0; i < bytes.length ; i++ ) {
-			//Parcourt les bits de l'octet de la position 7 à 0 vu qu'un octet contient 8 bits
-			for (int j  = 7; j >= 0; j--) {
-				// i * 8 -> indique à partir de quelle position dans "bits" commence l'octet actuel
-				//(7 - j) -> convertit j (qui descend de 7 à 0) en un indice qui monte de 0 à 7 ainsi le bit de poids fort est rangé en premier
-				bits[i * 8 + (7-j)] = (bytes[i] >> j) & 1;   // >> decale les bits vers la droite de j positions et &1 permet de garder que le dernier bit
+			// Parcourt les bits de l'octet du plus fort (7) au plus faible (0)
+			for (int j = 7; j >= 0; j--) {
+				bits[index] = (bytes[i] >> j) & 1;   // >> // decale l'octet de j positions vers la droite et &1 permet de garder que le dernier bit
+				index ++;
 			}
 		}
 		return bits;
@@ -182,9 +182,8 @@ public class AES {
 	    if (i < 0) {
 	        throw new IllegalArgumentException("Marqueur de bourrage absent");
 	    }
-	    
-	    // Le marqueur se trouve à la position i
-	    // On garde uniquement les bits qui le précèdent
+	    // Le marqueur se trouve a la position i
+	    // Garde uniquement les bits qui le precedent
 	    int[] resultat = new int[i];
 	    for (int j = 0; j < i; j++) {
 	        resultat[j] = bits[j];
