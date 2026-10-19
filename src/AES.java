@@ -364,7 +364,7 @@ public class AES {
 	 * @param mot Le mot de 4 octets
 	 * @return Un nouveau mot transformé par la S-box
 	 */
-	private int [] subWord(int []mot) {
+	public int [] subWord(int []mot) {
 		 // Verifie que mot n'est pas null et contient exactement 4 octets
 		if (mot == null || mot.length != 4) {
 	        throw new IllegalArgumentException("Un mot doit contenir exactement 4 octets.");

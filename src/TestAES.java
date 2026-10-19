@@ -242,17 +242,17 @@ public class TestAES {
         };
 
         int[][] resultat9 = aes.subByte(state);
-        System.out.println("Test 1 : " + (resultat9[0][0] == 237));  //Test 1 : true
+        System.out.println("Test 1 : " + (resultat9[0][0] == 237));  // Test 1 : true
         
         // Test 2 :-> vérifier que la matrice d'origine ne change pas
-        System.out.println("Test 2 : " + (state[0][0] == 83));  //Test 2 : true
+        System.out.println("Test 2 : " + (state[0][0] == 83));  // Test 2 : true
         
         // Test 3 -> matrice null
         try {
             aes.subByte(null);
             System.out.println("Test 3 : ECHEC");
         } catch (IllegalArgumentException e) {
-            System.out.println("Test 3 : réussi");  //Test 3 : réussi
+            System.out.println("Test 3 : réussi");  // Test 3 : réussi
         }
 
         // Test 4 -> matrice avec seulement 3 lignes
@@ -265,7 +265,7 @@ public class TestAES {
             aes.subByte(troisLignes);
             System.out.println("Test 4 : ECHEC");
         } catch (IllegalArgumentException e) {
-            System.out.println("Test 4 : réussi");  //Test 4 : réussi
+            System.out.println("Test 4 : réussi");  // Test 4 : réussi
         }
         
         // Test 5 -> une ligne avec seulement 3 colonnes
@@ -279,7 +279,7 @@ public class TestAES {
             aes.subByte(mauvaiseLigne);
             System.out.println("Test 5 : ECHEC");
         } catch (IllegalArgumentException e) {
-            System.out.println("Test 5 : réussi");  //Test 5 : réussi
+            System.out.println("Test 5 : réussi");  // Test 5 : réussi
         }
         
         // Test 6 -> valeur supérieure à 255
@@ -293,30 +293,31 @@ public class TestAES {
             aes.subByte(valeurTropGrande);
             System.out.println("Test 6 : ECHEC");
         } catch (IllegalArgumentException e) {
-            System.out.println("Test 6 : réussi");  ////Test 6 : réussi
+            System.out.println("Test 6 : réussi");  // Test 6 : réussi
         }
         System.out.println();
         
         
+        
         /*
-	     * Test method subWord
+	     * Test method rotWord
 	     */
         System.out.println("Tests de subWord :");
 
         // Test 1 -> vérifier la rotation circulaire
         int[] mot = {0x09, 0xCF, 0x4F, 0x3C};
         int[] resultat11 = aes.rotWord(mot);
-        System.out.println("Test 1 : " + Arrays.toString(resultat11));  //Test 1 : [207, 79, 60, 9]
+        System.out.println("Test 1 : " + Arrays.toString(resultat11));  // Test 1 : [207, 79, 60, 9]
 
         // Test 2 -> vérifier que le mot original n'est pas modifié
-        System.out.println("Test 2 : " + java.util.Arrays.toString(mot));  //Test 2 : [9, 207, 79, 60]
+        System.out.println("Test 2 : " + java.util.Arrays.toString(mot));  // Test 2 : [9, 207, 79, 60]
 
         // Test 3 -> vérifier le rejet de null
         try {
             aes.rotWord(null);
             System.out.println("Test 3 : ECHEC");
         } catch (IllegalArgumentException e) {
-            System.out.println("Test 3 : réussi");   //Test 3 : réussi
+            System.out.println("Test 3 : réussi");   // Test 3 : réussi
         }
 
         // Test 4 -> vérifier le rejet d'un mot trop court
@@ -324,7 +325,7 @@ public class TestAES {
             aes.rotWord(new int[]{0x09, 0xCF, 0x4F});
             System.out.println("Test 4 : ECHEC");
         } catch (IllegalArgumentException e) {
-            System.out.println("Test 4 : réussi");   //Test 4 : réussi
+            System.out.println("Test 4 : réussi");   // Test 4 : réussi
         }
 
         // Test 5 -> vérifier le rejet d'un mot trop long
@@ -332,8 +333,58 @@ public class TestAES {
             aes.rotWord(new int[]{0x09, 0xCF, 0x4F, 0x3C, 0x10});
             System.out.println("Test 5 : ECHEC");
         } catch (IllegalArgumentException e) {
-            System.out.println("Test 5 : réussi");   //Test 5 : réussi
+            System.out.println("Test 5 : réussi");   // Test 5 : réussi
         }
+        System.out.println();
+        
+        
+        
+        /*
+	     * Test method subWord
+	     */
+        System.out.println("Tests de subWord : ");
+
+        // Test 1 -> vérifier le remplacement par la S-Box
+        int[] mot12 = {0x09, 0xCF, 0x4F, 0x3C};
+        int[] resultat12 = aes.subWord(mot12);
+        System.out.println("Test 1 : " + java.util.Arrays.toString(resultat12));  // Test 1 : [1, 138, 132, 235]
+
+        // Test 2 -> vérifier que le mot original n'est pas modifié
+        System.out.println("Test 2 : " + java.util.Arrays.toString(mot));  // Test 2 : [9, 207, 79, 60]
+
+        // Test 3 -> vérifier le rejet de null
+        try {
+        	aes.subWord(null);
+        	System.out.println("Test 3 : ECHEC");
+        } catch (IllegalArgumentException e) {
+        	System.out.println("Test 3 : réussi");  // Test 3 : réussi
+        }
+
+        // Test 4 -> vérifier un mot de mauvaise taille
+        try {
+        	aes.subWord(new int[]{0x09, 0xCF, 0x4F});
+        	System.out.println("Test 4 : ECHEC");
+        } catch (IllegalArgumentException e) {
+        	System.out.println("Test 4 : réussi");   // Test 3 : réussi
+        }
+
+        // Test 5 -> vérifier un octet supérieur à 255
+        try {
+        	aes.subWord(new int[]{0x09, 0xCF, 0x4F, 256});
+        	System.out.println("Test 5 : ECHEC");
+        } catch (IllegalArgumentException e) {
+        	System.out.println("Test 5 : réussi");   // Test 3 : réussi
+        }
+
+        // Test 6 -> vérifier un octet négatif
+        try {
+        	aes.subWord(new int[]{0x09, 0xCF, 0x4F, -1});
+        	System.out.println("Test 6 : ECHEC");
+        } catch (IllegalArgumentException e) {
+        	System.out.println("Test 6 : réussi");   // Test 3 : réussi
+        } 
+        
+        
 	}
 	
 
