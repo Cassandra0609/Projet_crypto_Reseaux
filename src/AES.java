@@ -11,7 +11,19 @@ public class AES {
 	 * constants
 	 */
 	static int taille_bloc = 128;
-	static int [] Rcon;
+	static int [] Rcon = {
+			0x00, // Indice 0 inutilisé
+		    0x01, // RC1
+		    0x02, // RC2
+		    0x04, // RC3
+		    0x08, // RC4
+		    0x10, // RC5
+		    0x20, // RC6
+		    0x40, // RC7
+		    0x80, // RC8
+		    0x1B, // RC9
+		    0x36  // RC10
+	};
 	static int [][] sBox = {
 			{99,124,119,123,242,107,111,197,48,1,103,43,254,215,171,118},
 			{202,130,201,125,250,89,71,240,173,212,162,175,156,164,114,192},
@@ -326,7 +338,26 @@ public class AES {
 	}
 	
 	
-
+	/**
+	 * Effectue une rotation circulaire vers la gauche sur un mot de 4 octets
+	 * 
+	 * @param mot Le mot de 4 octets
+	 * @return Un nouveau mot avec les octets décalés
+	 */
+	private int [] rotWord (int [] mot) {
+		if (mot == null || mot.length != 4) {
+			throw new IllegalArgumentException("Un mot doit contenir exactement 4 octets");
+		}
+		int [] resultat = new int [4];
+		resultat[0] = mot[1];
+		resultat[1] = mot[2];
+		resultat[2] = mot[3];
+		resultat[3] = mot[0];
+		return resultat;
+		
+	}
+	
+	
 	/**
 	 * Permet de generer les cles de rondes
 	 * 
