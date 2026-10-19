@@ -3,7 +3,21 @@ import java.util.Arrays;
 public class TestAES {
 
 	public static void main(String[] args) {
-		// Instanciation de l'AES avec une cle de 128 bits
+		AES aes128 = new AES(128);
+		AES aes192 = new AES(192);
+	    AES aes256 = new AES(256);
+	    System.out.println("Les trois constructeurs fonctionnent.");  //Les trois constructeurs fonctionnent.
+
+	    try {
+	        AES invalide = new AES(64);
+	        System.out.println("Erreur : une taille invalide a été acceptée.");
+	    } catch (IllegalArgumentException e) {
+	        System.out.println("La taille invalide est bien rejetée.");   //La taille invalide est bien rejetée.
+	    }
+		
+	    
+	    
+	    // Instanciation de l'AES avec une cle de 128 bits
 		AES aes = new AES(128);
 		
 		/*
