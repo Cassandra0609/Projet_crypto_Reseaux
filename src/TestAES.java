@@ -231,9 +231,70 @@ public class TestAES {
 	    System.out.println(t[0][0]);   // 99
 	    System.out.println(t[0][1]);   //124
 	    System.out.println(s[0][0]);   //0
-	    
-	    
         System.out.println();
+        
+        // Test 1 -> vérifier une substitution connue
+        int[][] state = {
+            {83, 0, 0, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}
+        };
+
+        int[][] resultat9 = aes.subByte(state);
+        System.out.println("Test 1 : " + (resultat9[0][0] == 237));  //Test 1 : true
+        
+        // Test 2 :-> vérifier que la matrice d'origine ne change pas
+        System.out.println("Test 2 : " + (state[0][0] == 83));  //Test 2 : true
+        
+        // Test 3 -> matrice null
+        try {
+            aes.subByte(null);
+            System.out.println("Test 3 : ECHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test 3 : réussi");  //Test 3 : réussi
+        }
+
+        // Test 4 -> matrice avec seulement 3 lignes
+        int[][] troisLignes = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}
+        };
+        try {
+            aes.subByte(troisLignes);
+            System.out.println("Test 4 : ECHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test 4 : réussi");  //Test 4 : réussi
+        }
+        
+        // Test 5 -> une ligne avec seulement 3 colonnes
+        int[][] mauvaiseLigne = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0}
+        };
+        try {
+            aes.subByte(mauvaiseLigne);
+            System.out.println("Test 5 : ECHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test 5 : réussi");  //Test 5 : réussi
+        }
+        
+        // Test 6 -> valeur supérieure à 255
+        int[][] valeurTropGrande = {
+            {256, 0, 0, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}
+        };
+        try {
+            aes.subByte(valeurTropGrande);
+            System.out.println("Test 6 : ECHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test 6 : réussi");  ////Test 6 : réussi
+        }
 	}
 	
 
