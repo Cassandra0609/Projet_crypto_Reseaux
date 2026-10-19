@@ -75,6 +75,9 @@ public class AES {
 	 * @param tcl  (128,192,256)
 	 */
 	public AES(int tcl) {
+		if (tcl != 128 && tcl != 192 && tcl != 256) {
+		        throw new IllegalArgumentException("La taille de clé doit être 128, 192 ou 256 bits");
+		}
 		this.taille_cle_maitre = tcl;
 		//Le nombre de ronde dépend de la taille de la clé
 		if (tcl==128) {
