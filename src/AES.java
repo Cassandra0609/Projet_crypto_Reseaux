@@ -497,17 +497,48 @@ public class AES {
 				newState[i][j] = state[i][j] ^ cleRonde[i][j] ;
 			}
 		}
-		return newState;
-		
+		return newState;	
 	}
 	
 	
-	
-	
-	
-	
-	
-	
+	/**
+	 * Permet d'appliquer la substitution inverse sur la matrice d'état
+     *
+	 * @param state La matrice d'état 4x4
+	 * @return Une nouvelle matrice State transformée par la S-box inverse
+	 */
+	private int [][] subByteInv (int [][] state){
+		// Verifie que la matrice n'est pas null
+		if (state == null) {
+			throw new IllegalArgumentException("La matrice State ne doit pas être null");
+		}
+		// Verifie que la matrice possede bien 4 lignes
+		if (state.length != 4) {
+			throw new IllegalArgumentException("La matrice State doit être de taille 4x4");
+		}
+		// Verifie chaque ligne pour s'assurer qu'elle n'est pas null et fait bien 4 colonnes
+		for (int i = 0; i < 4; i++) {
+		    if (state[i] == null || state[i].length != 4) {
+		        throw new IllegalArgumentException("La matrice State doit être de taille 4x4");
+		    }
+		}
+		int [][] newState = new int[4][4];
+		// Parcourt chaque case de la matrice
+		for (int i=0; i<4; i++) {
+			for (int j=0; j<4; j++) {
+				int octet = state[i][j]; // recupere l'octet situé dans state[i][j]
+				// Verifie que l'octet est bien un octet valide (entre 0 et 255)
+				if (octet < 0 || octet > 255) {
+				    throw new IllegalArgumentException("Chaque octet doit être compris entre 0 et 255");
+				}
+		        // Calcule la ligne et la colonne dans sBoxInv
+				int ligne = octet / 16;  // divise l'octet par 16 pour obtenir la ligne de la S-Box inverse
+				int colonne = octet % 16 ;  // calcule le reste de la division par 16 pour obtenir la colonne de la S-Box inverse
+				newState[i][j] = sBoxInv[ligne][colonne];  // range la valeur obtenue par la S-Box inverse
+			}
+		}
+		return newState;
+	}
 	
 	public static void main(String[] args) {
 		
