@@ -464,10 +464,50 @@ public class TestAES {
         } catch (IllegalArgumentException e) {
             System.out.println("Octet invalide : Réussi");  //Octet invalide : Réussi
         }
+        System.out.println();
         
         
         
-        
+        /*
+         * Test de la onzieme methode addRoundKey
+         */
+        System.out.println("Tests méthode 10 : ");
+        int[][] state11 = {
+        	    {0x00, 0x11, 0x22, 0x33},
+        	    {0x44, 0x55, 0x66, 0x77},
+        	    {0x88, 0x99, 0xAA, 0xBB},
+        	    {0xCC, 0xDD, 0xEE, 0xFF}
+        	};
+
+        int[][] cleRonde11 = {
+        	    {0xFF, 0xFF, 0xFF, 0xFF},
+        	    {0xFF, 0xFF, 0xFF, 0xFF},
+        	    {0xFF, 0xFF, 0xFF, 0xFF},
+        	    {0xFF, 0xFF, 0xFF, 0xFF}
+        	};
+        int[][] resultat13 = aes.addRoundKey(state11, cleRonde11);
+      	
+        // Vérifie que le XOR donne le résultat attendu.
+       	boolean resultatCorrect = true;
+       	for (int i = 0; i < 4; i++) {
+       	    for (int j = 0; j < 4; j++) {
+       	        if (resultat13[i][j] != (state11[i][j] ^ 0xFF)) {
+       	            resultatCorrect = false;
+       	        }
+       	    }
+       	}
+       	System.out.println("Calcul du XOR : " + (resultatCorrect ? "Réussi" : "ÉCHEC"));   // Calcul du XOR : Réussi
+
+        // Vérifie que la matrice d'origine n'a pas été modifiée.
+        System.out.println("État initial conservé : " + (state11[0][0] == 0x00 && state11[3][3] == 0xFF ? "Réussi" : "ÉCHEC"));    // Etat initial conservé : Réussi
+
+        // Vérifie le rejet d'une matrice de dimensions incorrectes.
+        try {
+            aes.addRoundKey(new int[3][4], cleRonde11);
+            System.out.println("Matrice invalide : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Matrice invalide : Réussi");  // Matrice invalide : Réussi
+        }
         
         
         

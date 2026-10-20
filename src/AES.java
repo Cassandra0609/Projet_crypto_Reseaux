@@ -473,7 +473,7 @@ public class AES {
 	 * @param cleRonde La matrice de clé de ronde 4x4
 	 * @return Une nouvelle matrice State après application du XOR avec la clé de ronde
 	 */
-	private int [][] addRoundKey (int [][] state, int [][] cleRonde){
+	public int [][] addRoundKey (int [][] state, int [][] cleRonde){
 		// Verifie que les matrices ne sont pas nulles
         if (state == null || cleRonde == null) {
             throw new IllegalArgumentException("Les matrices State et cleRonde ne doivent pas être nulles");
