@@ -471,7 +471,7 @@ public class TestAES {
         /*
          * Test de la onzieme methode addRoundKey
          */
-        System.out.println("Tests méthode 10 : ");
+        System.out.println("Tests méthode 11 : ");
         int[][] state11 = {
         	    {0x00, 0x11, 0x22, 0x33},
         	    {0x44, 0x55, 0x66, 0x77},
@@ -508,10 +508,35 @@ public class TestAES {
         } catch (IllegalArgumentException e) {
             System.out.println("Matrice invalide : Réussi");  // Matrice invalide : Réussi
         }
+        System.out.println();
         
-        
-        
-        
+        /*
+         * Test de la douzieme methode subByteInv
+         */
+        System.out.println("Tests méthode 12 : ");
+        // Test 1 -> vérifier que les deux substitutions s'annulent
+        int[][] state12 = {
+            {0x00, 0x11, 0x22, 0x33},
+            {0x44, 0x55, 0x66, 0x77},
+            {0x88, 0x99, 0xAA, 0xBB},
+            {0xCC, 0xDD, 0xEE, 0xFF}
+        };
+        int[][] apresSubByte = aes.subByte(state12);
+        int[][] apresSubByteInv = aes.subByteInv(apresSubByte);
+        System.out.println("Substitution puis substitution inverse : " + (java.util.Arrays.deepEquals(state12, apresSubByteInv) ? "Réussi" : "ÉCHEC"));    // Substitution puis substitution inverse : Réussi
+
+        // Test 2 -> vérifier que l'état initial n'est pas modifié
+        System.out.println("État initial conservé : " + (state12[0][0] == 0x00 && state12[3][3] == 0xFF ? "Réussi" : "ÉCHEC"));   // État initial conservé : Réussi
+
+        // Test 3 -> vérifier le rejet d'un octet invalide
+        try {
+            int[][] stateInvalide = new int[4][4];
+            stateInvalide[0][0] = 256;
+            aes.subByteInv(stateInvalide);
+            System.out.println("Octet invalide : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Octet invalide : Réussi");   // Octet invalide : Réussi
+        }
         
         
         
