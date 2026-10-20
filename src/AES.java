@@ -540,6 +540,60 @@ public class AES {
 		return newState;
 	}
 	
+	
+	
+	/**
+	 * Effectue le décalage cyclique des lignes de la matrice d'état
+	 * La première ligne n'est pas décalée. Les lignes suivantes sont décalées respectivement d'une, deux et trois positions vers la gauche
+	 * 
+	 * @param state La matrice d'état 4x4
+	 * @return Une nouvelle matrice State après décalage des lignes
+	 */
+	private int [][] shiftRows (int [][] state){
+		// Verifie que la matrice n'est pas null
+		if (state == null) {
+			throw new IllegalArgumentException("La matrice State ne doit pas être null");
+		}
+		// Verifie que la matrice possede bien 4 lignes
+		if (state.length != 4) {
+			throw new IllegalArgumentException("La matrice State doit être de taille 4x4");
+		}
+		// Verifie chaque ligne pour s'assurer qu'elle n'est pas null et fait bien 4 colonnes
+		for (int i = 0; i < 4; i++) {
+		    if (state[i] == null || state[i].length != 4) {
+		        throw new IllegalArgumentException("La matrice State doit être de taille 4x4");
+		    }
+		}
+		int [][] newState = new int[4][4];
+		// Parcourt chaque ligne et chaque colonne de la matrice.
+	    for (int i=0; i<4; i++) {
+			for (int j=0; j<4; j++) {
+				// Vérifie que la valeur représente un octet valide (entre 0 et 255).
+	            if (state[i][j] < 0 || state[i][j] > 255) {
+				    throw new IllegalArgumentException("Chaque octet doit être comprise entre 0 et 255");
+				}
+	            // Décale cycliquement la ligne i vers la gauche de i positions.
+	            // Le modulo 4 permet de revenir au début de la ligne si nécessaire.
+				newState[i][j] = state[i][(j + i) % 4];
+			}
+		}
+		return newState;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public static void main(String[] args) {
 		
 	}
