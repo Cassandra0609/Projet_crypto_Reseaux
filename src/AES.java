@@ -466,7 +466,40 @@ public class AES {
 	
 	
 	
-	
+	/**
+	 * Permet d'appliquer la clé de ronde sur la matrice d'état (XOR octet par octet)
+     *
+	 * @param state La matrice d'état 4x4
+	 * @param cleRonde La matrice de clé de ronde 4x4
+	 * @return Une nouvelle matrice State après application du XOR avec la clé de ronde
+	 */
+	private int [][] addRoundKey (int [][] state, int [][] cleRonde){
+		// Verifie que les matrices ne sont pas nulles
+        if (state == null || cleRonde == null) {
+            throw new IllegalArgumentException("Les matrices State et cleRonde ne doivent pas être nulles");
+        }
+        // Verifie que les matrices possedent bien 4 lignes
+        if (state.length != 4 || cleRonde.length != 4) {
+            throw new IllegalArgumentException("Les matrices doivent être de taille 4x4");
+        }
+        // Vérifie chaque ligne pour s'assurer qu'elle n'est pas nulle et fait bien 4 colonnes
+        for (int i = 0; i < 4; i++) {
+            if (state[i] == null || state[i].length != 4 || cleRonde[i] == null || cleRonde[i].length != 4) {
+                throw new IllegalArgumentException("Les matrices doivent être de taille 4x4");
+            }
+        }
+		int [][] newState = new int [4][4];
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j<4; j++) {
+				if (state[i][j] < 0 || state[i][j] > 255 || cleRonde[i][j] < 0 || cleRonde[i][j] > 255) {
+				    throw new IllegalArgumentException("Chaque valeur doit être comprise entre 0 et 255");
+				}
+				newState[i][j] = state[i][j] ^ cleRonde[i][j] ;
+			}
+		}
+		return newState;
+		
+	}
 	
 	
 	
