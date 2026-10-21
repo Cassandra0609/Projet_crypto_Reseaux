@@ -510,6 +510,8 @@ public class TestAES {
         }
         System.out.println();
         
+        
+        
         /*
          * Test de la douzieme methode subByteInv
          */
@@ -540,5 +542,68 @@ public class TestAES {
         
         
         
+        /*
+         * Test de la treizieme methode shiftRows
+         */
+        System.out.println("Tests méthode 13 : ");
+
+        // Test 1 -> vérifier le décalage cyclique des lignes
+        int[][] state13 = {
+        		{0x00, 0x01, 0x02, 0x03},
+        		{0x10, 0x11, 0x12, 0x13},
+        		{0x20, 0x21, 0x22, 0x23},
+        		{0x30, 0x31, 0x32, 0x33}
+        };
+        // Résultat attendu après le décalage vers la gauche.
+        int[][] attendu = {
+        		{0x00, 0x01, 0x02, 0x03},
+        		{0x11, 0x12, 0x13, 0x10},
+        		{0x22, 0x23, 0x20, 0x21},
+        		{0x33, 0x30, 0x31, 0x32}
+        };
+        int[][] resultat14 = aes.shiftRows(state13);
+        System.out.println("Décalage cyclique correct : " + (Arrays.deepEquals(resultat14, attendu) ? "Réussi" : "ÉCHEC"));   // Décalage cyclique correct : Réussi
+        
+        // Test 2 -> vérifier que la matrice originale est conservée
+        int[][] original = {
+        		{0x00, 0x01, 0x02, 0x03},
+        		{0x10, 0x11, 0x12, 0x13},
+        		{0x20, 0x21, 0x22, 0x23},
+        		{0x30, 0x31, 0x32, 0x33}
+        };
+        int[][] copieOriginale = new int[4][4];
+        for (int i = 0; i < 4; i++) {
+        	copieOriginale[i] = original[i].clone();
+        }
+        aes.shiftRows(original);
+        System.out.println("Matrice originale inchangée : " + (Arrays.deepEquals(original, copieOriginale) ? "Réussi" : "ÉCHEC"));   // Matrice originale inchangée : Réussi 
+        
+        
+        // Test 3 -> vérifier le rejet d'une matrice null
+        try {
+        	aes.shiftRows(null);
+        	System.out.println("Matrice null : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+        	System.out.println("Matrice null : Réussi");   // Matrice null : Réussi
+        }
+
+        // Test 4 -> vérifier le rejet d'une matrice de mauvaises dimensions
+        try {
+        	aes.shiftRows(new int[3][4]);
+        	System.out.println("Dimensions invalides : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+        	System.out.println("Dimensions invalides : Réussi");   // Dimensions invalides : Réussi
+        }
+
+        // Test 5 -> vérifier le rejet d'un octet invalide
+        try {
+        	int[][] stateInvalide = new int[4][4];
+        	stateInvalide[0][0] = 256;
+
+        	aes.shiftRows(stateInvalide);
+        	System.out.println("Octet invalide : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+        	System.out.println("Octet invalide : Réussi");    // Octet invalide : Réussi
+        }
     }
 }

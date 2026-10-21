@@ -549,7 +549,7 @@ public class AES {
 	 * @param state La matrice d'état 4x4
 	 * @return Une nouvelle matrice State après décalage des lignes
 	 */
-	private int [][] shiftRows (int [][] state){
+	public int [][] shiftRows (int [][] state){
 		// Verifie que la matrice n'est pas null
 		if (state == null) {
 			throw new IllegalArgumentException("La matrice State ne doit pas être null");
