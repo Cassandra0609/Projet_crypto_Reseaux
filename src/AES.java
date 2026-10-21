@@ -731,6 +731,38 @@ public class AES {
 	
 	
 	
+	/**
+	 * Permet de multiplier une colonne d'octets pour l'étape MixColumns
+	 * 
+	 * @param c La colonne de 4 octets
+	 * @return Une nouvelle colonne apres multiplication des octet
+	 */
+	private int [] prodAu(int[]c) {
+		// Verifie que la colonne n'est pas null
+		if (c == null) {
+			throw new IllegalArgumentException("La colonne ne doit pas être null");
+		}
+		// Verifie que la colonne possede bien 4 lignes
+		if (c.length != 4) {
+			throw new IllegalArgumentException("La colonne doit avoir 4 lignes");
+		}
+		for (int i=0; i<4; i++) {
+			// Vérifie que la valeur représente un octet valide (entre 0 et 255).
+            if (c[i] < 0 || c[i] > 255) {
+			    throw new IllegalArgumentException("Chaque octet doit être compris entre 0 et 255");
+			}
+		}
+		int [] resultat = new int [4];
+		resultat[0] = this.deux_a(c[0]) ^ this.trois_a(c[1]) ^ c[2] ^ c[3];
+		resultat[1] = c[0] ^ this.deux_a(c[1]) ^ this.trois_a(c[2]) ^ c[3];
+		resultat[2] = c[0] ^ c[1] ^ this.deux_a(c[2]) ^ this.trois_a(c[3]);
+		resultat[3] = this.trois_a(c[0]) ^ c[1] ^ c[2] ^ this.deux_a(c[3]);
+		return resultat;
+	}
+	
+	
+	
+	
 	
 	
 	public static void main(String[] args) {
