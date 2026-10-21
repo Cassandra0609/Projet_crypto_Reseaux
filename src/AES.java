@@ -697,7 +697,19 @@ public class AES {
 	
 	
 	
-	
+	/**
+	 * Multiplie un octet par 13 dans le corps fini GF(2^8) (13 = 8 + 4 + 1  soit 9 + 4)
+	 * @param a Un octet (entre 0 et 255)
+	 * @return Le résultat de la multiplication par 13 dans GF(2^8)
+	 */
+	public int treize_a (int a) {
+		// Vérifie que l'octet est valide
+		if (a < 0 || a > 255) {
+		    throw new IllegalArgumentException("L'octet doit être compris entre 0 et 255");
+		}
+		int quatreA = this.deux_a(this.deux_a(a));
+		return this.neuf_a(a) ^ quatreA;		 
+	}
 	
 	
 	
