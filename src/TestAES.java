@@ -608,7 +608,7 @@ public class TestAES {
         
         
         /*
-         * Test de la quatorzieme methode shiftRows
+         * Test de la quatorzieme methode shiftRowsInv
          */
         System.out.println("Tests méthode 14 : ");
         // Test 1 -> vérifier le décalage cyclique inverse
@@ -644,5 +644,44 @@ public class TestAES {
         } catch (IllegalArgumentException e) {
             System.out.println("Octet invalide : Réussi");   // Octet invalide : Réussi
         }
-    }
-}
+        System.out.println();
+        
+        
+        
+        /*
+         * Test de la quinzieme methode deux_a
+         */
+        System.out.println("Tests méthode 15 : ");
+		// Test 1 -> décalage simple, sans réduction
+		System.out.println("Test 1 (0x01) : " + (aes.deux_a(0x01) == 0x02 ? "Réussi" : "ÉCHEC"));   // Test 1 (0x01) : Réussi
+		
+		// Test 2 -> autre décalage simple
+		System.out.println("Test 2 (0x57) : " + (aes.deux_a(0x57) == 0xAE ? "Réussi" : "ÉCHEC"));   // Test 2 (0x57) : Réussi
+		
+		// Test 3 -> bit de poids fort à 1, réduction nécessaire
+		System.out.println("Test 3 (0x80) : " + (aes.deux_a(0x80) == 0x1B ? "Réussi" : "ÉCHEC"));   // Test 3 (0x80) : Réussi
+		
+		// Test 4 -> octet maximal
+		System.out.println("Test 4 (0xFF) : " + (aes.deux_a(0xFF) == 0xE5 ? "Réussi" : "ÉCHEC"));  // Test 4 (0xFF) : Réussi
+		
+		// Test 5 -> zéro
+		System.out.println("Test 5 (0x00) : "  + (aes.deux_a(0x00) == 0x00 ? "Réussi" : "ÉCHEC"));   // Test 5 (0x00) : Réussi
+		
+		// Test 6 -> valeur négative, qui doit être refusée
+		try {
+		    aes.deux_a(-1);
+		    System.out.println("Test 6 (valeur négative) : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+		    System.out.println("Test 6 (valeur négative) : Réussi");   // Test 6 (valeur négative) : Réussi
+		}
+		
+		// Test 7 -> valeur supérieure à 255, qui doit être refusée
+		try {
+		    aes.deux_a(256);
+		    System.out.println("Test 7 (valeur supérieure à 255) : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+		    System.out.println("Test 7 (valeur supérieure à 255) : Réussi");    // Test 7 (valeur supérieure à 255) : Réussi
+		}
+		
+		    }
+		}

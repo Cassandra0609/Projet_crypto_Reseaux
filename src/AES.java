@@ -629,7 +629,7 @@ public class AES {
 	 * @param a Un octet (entre 0 et 255)
 	 * @return Le résultat de la multiplication par 2 dans GF(2^8)
 	 */
-	private int deux_a (int a) {
+	public int deux_a (int a) {
 		// Vérifie que l'octet est valide
 		if (a < 0 || a > 255) {
 		    throw new IllegalArgumentException("L'octet doit être compris entre 0 et 255");
