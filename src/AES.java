@@ -623,7 +623,28 @@ public class AES {
 	
 	
 	
-	
+	/**
+	 * Multiplie un octet par 2 dans le corps fini GF(2^8)
+     *
+	 * @param a Un octet (entre 0 et 255)
+	 * @return Le résultat de la multiplication par 2 dans GF(2^8)
+	 */
+	private int deux_a (int a) {
+		// Vérifie que l'octet est valide
+		if (a < 0 || a > 255) {
+		    throw new IllegalArgumentException("L'octet doit être compris entre 0 et 255");
+		}
+		int resultat = 0;
+		// Verifie si le bit de poids fort de a vaut 1
+		// Dans un octet (8 bits), le bit de poids fort correspond à la valeur 0x80 en hexadécimal
+		if ((a & 0x80) != 0) {
+			resultat = (a << 1) ^ 0x1B ;
+		}
+		else {
+			resultat = (a << 1);
+		}
+		return resultat & 0xFF;   // Garde uniquement les 8 bits de droite et supprime le bit en position 8
+	}
 	
 	
 	
