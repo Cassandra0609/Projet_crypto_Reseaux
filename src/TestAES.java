@@ -928,8 +928,7 @@ public class TestAES {
         } catch (IllegalArgumentException e) {
             System.out.println("Test 7 (Octet > 255) : Réussi");   // Test 7 (Octet > 255) : Réussi
         }
-        System.out.println();
-		
+
         // Test visuel de la méthode prodAu
         System.out.println("Test visuel méthode prodAu : ");
         int[] colonneATester = {219, 19, 83, 69};
@@ -941,7 +940,66 @@ public class TestAES {
 		
 		
 		
-		
+        /*
+         * Test de la vingt-deuxieme méthode prodAuInv
+         */
+        System.out.println("Tests méthode 22 : ");
+        // Test visuel -> Cas nominal avec une colonne valide
+        int[] colonneTestInv = {142, 77, 161, 188};
+        int[] resultatProdAuInv = aes.prodAuInv(colonneTestInv);
+        System.out.println("Colonne d'origine pour Inv : " + Arrays.toString(colonneTestInv));   // Colonne d'origine pour Inv : [142, 77, 161, 188]
+        System.out.println("Colonne après prodAuInv  : " + Arrays.toString(resultatProdAuInv));  // Colonne après prodAuInv  : [219, 19, 83, 69]
+        
+        // Test 2 -> vérifier que prodAuInv annule prodAu
+        int[] c = {219, 19, 83, 69};
+        int[] apresProdAu = aes.prodAu(c);
+        int[] retourP = aes.prodAuInv(apresProdAu);
+        System.out.println("prodAu puis prodAuInv : " + (Arrays.equals(c, retourP) ? "Réussi" : "ÉCHEC"));   // prodAu puis prodAuInv : Réussi
+
+        
+        // Test 3 -> Vérification que la colonne d'origine n'est pas modifiée
+        System.out.println("Test 3 (Colonne d'origine inchangée) : " + (colonneTestInv[0] == 142 && colonneTestInv[3] == 188 ? "Réussi" : "ÉCHEC"));   // Test 3 (Colonne d'origine inchangée) : Réussi
+        
+        // Test 4 -> Rejet d'une colonne null
+        try {
+            aes.prodAuInv(null);
+            System.out.println("Test 4 (Colonne null) : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test 4 (Colonne null) : Réussi");   // Test 4 (Colonne null) : Réussi
+        }
+        
+        // Test 5 -> Rejet d'une colonne de taille incorrecte (trop courte)
+        try {
+            aes.prodAuInv(new int[]{1, 2, 3});
+            System.out.println("Test 5 (Colonne trop courte) : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test 5 (Colonne trop courte) : Réussi");   // Test 5 (Colonne trop courte) : Réussi
+        }
+        
+        // Test 6 -> Rejet d'une colonne de taille incorrecte (trop longue)
+        try {
+            aes.prodAuInv(new int[]{1, 2, 3, 4, 5});
+            System.out.println("Test 6 (Colonne trop longue) : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test 6 (Colonne trop longue) : Réussi");   // Test 6 (Colonne trop longue) : Réussi
+        }
+        
+        // Test 7 -> Rejet d'un octet invalide (négatif)
+        try {
+            aes.prodAuInv(new int[]{-1, 2, 3, 4});
+            System.out.println("Test 7 (Octet négatif) : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test 7 (Octet négatif) : Réussi");   // Test 7 (Octet négatif) : Réussi
+        }
+        
+        // Test 8 -> Rejet d'un octet invalide (> 255)
+        try {
+            aes.prodAuInv(new int[]{1, 2, 3, 256});
+            System.out.println("Test 8 (Octet > 255) : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test 8 (Octet > 255) : Réussi");   // Test 8 (Octet > 255) : Réussi
+        }
+        System.out.println();
 		
     }
 }
