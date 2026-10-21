@@ -319,8 +319,7 @@ public class AES {
 		    if (state[i] == null || state[i].length != 4) {
 		        throw new IllegalArgumentException("La matrice State doit être de taille 4x4");
 		    }
-		}
-		
+		}		
 		int [][] newState = new int[4][4];
 		// Parcourt chaque ligne de la matrice
 		for (int i=0; i<4; i++) {
@@ -411,9 +410,9 @@ public class AES {
 		    }
 		}
 		// Nk représente le nombre de mots de 32 bits dans la clé maître. Chaque mot contient 4 octets soit 32 bits
-		int Nk = taille_cle_maitre / 32;
+		int Nk = this.taille_cle_maitre / 32;
 		// matrice qui contiendra tous les mots de la clé étendue
-	    keys = new int[4][4 * (nb_ronde + 1)];
+	    keys = new int[4][4 * (this.nb_ronde + 1)];
 	    // Copie les mots de la clé maître au début de la clé étendue
 		for (int i = 0; i < 4; i++) {
 		    for (int j = 0; j < Nk; j++) {
@@ -426,7 +425,7 @@ public class AES {
 		    }
 		}
 		// Calcule les mots suivants de la clé étendue à partir des mots déjà calculés, jusqu'à obtenir toutes les clés nécessaires
-	    for (int j = Nk; j < 4*(nb_ronde + 1); j++) {
+	    for (int j = Nk; j < 4*(this.nb_ronde + 1); j++) {
 	    	// Récupère le mot précédent qui est composé de 4 octets
 	        int [] temp = new int [4];
 			temp[0] = keys[0][j - 1];
@@ -434,7 +433,7 @@ public class AES {
 			temp[2] = keys[2][j - 1];
 			temp[3] = keys[3][j - 1];
 			if (j % Nk == 0) {
-				temp = subWord(rotWord(temp));
+				temp = this.subWord(this.rotWord(temp));
 				// Vérifie que la constante Rcon nécessaire existe
 				if (j / Nk >= Rcon.length) {
 				    throw new IllegalStateException("Constante Rcon manquante");
@@ -443,7 +442,7 @@ public class AES {
 				temp[0] ^= Rcon[j / Nk];
 			// Cas particulier de l'AES-256 : une substitution supplémentaire est appliquée lorsque Nk vaut 8 et que l'indice du mot est congru à 4 modulo Nk
 		    }else if (Nk == 8 && (j % Nk == 4)) {
-				temp = subWord(temp);
+				temp = this.subWord(temp);
 			}
 			// Calcule le nouveau mot en faisant un XOR entre le mot situé Nk positions avant et le mot temporaire transformé
 			for (int i = 0; i < 4; i++) {
@@ -451,9 +450,9 @@ public class AES {
 			}
 		}
 	    //tableau qui contiendra les clés de toutes les rondes
-		int[][][] clesRondes = new int[nb_ronde + 1][4][4];
+		int[][][] clesRondes = new int[this.nb_ronde + 1][4][4];
 		// Parcourt toutes les clés de ronde, de la clé initiale à la dernière
-	    for (int r = 0; r <= nb_ronde; r++) {
+	    for (int r = 0; r <= this.nb_ronde; r++) {
 		    for (int i = 0; i < 4; i++) {
 		        for (int j = 0; j < 4; j++) {
 		            clesRondes[r][i][j] = keys[i][4 * r + j]; // Recopie les 4 colonnes correspondant à cette ronde dans une matrice de 4×4
@@ -494,7 +493,7 @@ public class AES {
 				if (state[i][j] < 0 || state[i][j] > 255 || cleRonde[i][j] < 0 || cleRonde[i][j] > 255) {
 				    throw new IllegalArgumentException("Chaque valeur doit être comprise entre 0 et 255");
 				}
-				newState[i][j] = state[i][j] ^ cleRonde[i][j] ;
+				newState[i] = this.xor(state[i], cleRonde[i]) ;
 			}
 		}
 		return newState;	
