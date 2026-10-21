@@ -737,7 +737,7 @@ public class AES {
 	 * @param c La colonne de 4 octets
 	 * @return Une nouvelle colonne apres multiplication des octet
 	 */
-	private int [] prodAu(int[]c) {
+	public int [] prodAu(int[]c) {
 		// Verifie que la colonne n'est pas null
 		if (c == null) {
 			throw new IllegalArgumentException("La colonne ne doit pas être null");
