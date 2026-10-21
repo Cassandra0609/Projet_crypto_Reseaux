@@ -932,11 +932,11 @@ public class TestAES {
 		
         // Test visuel de la méthode prodAu
         System.out.println("Test visuel méthode prodAu : ");
-        int[] colonneATester = {0x01, 0x02, 0x03, 0x04};
+        int[] colonneATester = {219, 19, 83, 69};
         int[] resultatVisuel = aes.prodAu(colonneATester);
         
-        System.out.println("Colonne d'origine : " + Arrays.toString(colonneATester));     //Colonne d'origine : [1, 2, 3, 4]
-        System.out.println("Colonne après prodAu : " + Arrays.toString(resultatVisuel));  //Colonne après prodAu : [3, 4, 9, 10]
+        System.out.println("Colonne d'origine : " + Arrays.toString(colonneATester));     // Colonne d'origine : [219, 19, 83, 69]
+        System.out.println("Colonne après prodAu : " + Arrays.toString(resultatVisuel));  // Colonne après prodAu : [142, 77, 161, 188]
         System.out.println();
 		
 		
