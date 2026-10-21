@@ -646,6 +646,7 @@ public class AES {
 	}
 	
 	
+	
 	/**
 	 * Multiplie un octet par 3 dans le corps fini GF(2^8)
 	 * 
@@ -657,8 +658,48 @@ public class AES {
 		if (a < 0 || a > 255) {
 		    throw new IllegalArgumentException("L'octet doit être compris entre 0 et 255");
 		}
-		return deux_a(a) ^ a;	 // 3*a = 2*a XOR a
+		return this.deux_a(a) ^ a;	 // 3*a = 2*a XOR a
 	}
+	
+	
+	
+	/**
+	 * Multiplie un octet par 9 dans le corps fini GF(2^8) (9 = 8 + 1, et l’addition dans GF(2^8) est le XOR)
+	 * @param a Un octet (entre 0 et 255)
+	 * @return Le résultat de la multiplication par 9 dans GF(2^8)
+	 */
+	public int neuf_a (int a) {
+		// Vérifie que l'octet est valide
+		if (a < 0 || a > 255) {
+		    throw new IllegalArgumentException("L'octet doit être compris entre 0 et 255");
+		}
+		// 9 = 8 + 1 or 8 = deux_a appliquée 3 fois (8 = 2^3), puis on ajoute a (XOR dans GF(2^8))
+		int huitA = this.deux_a(this.deux_a(this.deux_a(a)));
+		return huitA ^ a; 
+	}
+	
+	
+	
+	/**
+	 * Multiplie un octet par 11 dans le corps fini GF(2^8) (11 = 8 + 2 + 1)
+	 * @param a Un octet (entre 0 et 255)
+	 * @return Le résultat de la multiplication par 11 dans GF(2^8)
+	 */
+	public int onze_a (int a) {
+		// Vérifie que l'octet est valide
+		if (a < 0 || a > 255) {
+		    throw new IllegalArgumentException("L'octet doit être compris entre 0 et 255");
+		}
+		// 11 = 8 + 2 + 1
+		int deuxA = this.deux_a(a);
+		return this.neuf_a(a) ^ deuxA;		 
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	
