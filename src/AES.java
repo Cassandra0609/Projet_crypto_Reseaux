@@ -792,6 +792,45 @@ public class AES {
 	
 	
 	
+	/**
+	 * Permet de transformer chaque colonne de la matrice d'état 4x4 indépendamment
+     *
+	 * @param state La matrice d'état (4x4)
+	 * @return Une nouvelle matrice d'état après le mélange global
+	 */
+	public int[][] mixColumns (int[][] state){
+		// Verifie que la matrice n'est pas null
+		if (state == null) {
+			throw new IllegalArgumentException("La matrice State ne doit pas être null");
+		}
+		// Verifie que la matrice possede bien 4 lignes
+		if (state.length != 4) {
+			throw new IllegalArgumentException("La matrice State doit être de taille 4x4");
+		}
+		// Verifie chaque ligne pour s'assurer qu'elle n'est pas null et fait bien 4 colonnes
+		for (int i = 0; i < 4; i++) {
+		    if (state[i] == null || state[i].length != 4) {
+		        throw new IllegalArgumentException("La matrice State doit être de taille 4x4");
+		    }
+		}		
+		int [][] newState = new int[4][4];
+		// Parcourt chaque colonne de la matrice
+		for (int j=0; j<4; j++) {
+			// Extrait la colonne j de la matrice state
+            int[] colonne = new int[4];
+            for (int i = 0; i < 4; i++) {
+                colonne[i] = state[i][j];
+            }
+            // Applique prodAu à la colonne j (produit par la matrice M)
+            int [] resultat = this.prodAu(colonne);
+            // Mettre la colonne mélangée dans la nouvelle matrice newState
+            for (int i = 0; i < 4; i++) {
+                newState[i][j] = resultat[i];
+            }
+		}
+		return newState;
+	}
+	
 	
 	
 	
