@@ -1000,6 +1000,84 @@ public class TestAES {
             System.out.println("Test 8 (Octet > 255) : Réussi");   // Test 8 (Octet > 255) : Réussi
         }
         System.out.println();
+        
+        
+        
+        /*
+        - Test de la vingt-troisieme méthode mixColumns
+        */
+        System.out.println("Tests méthode 23 : ");     
+        // Test 1 -> Test visuel et nominal avec une matrice 4x4 valide
+        int[][] state23 = {
+            {1, 5, 9, 13},
+            {2, 6, 10, 14},
+            {3, 7, 11, 15},
+            {4, 8, 12, 16}
+        };    
+        int[][] resultatMix = aes.mixColumns(state23);       
+        System.out.println("Matrice d'origine :");
+        for (int[] ligne : state23) {
+            System.out.println(Arrays.toString(ligne));
+        }
+        //Matrice d'origine :
+        // [1, 5, 9, 13]
+        // [2, 6, 10, 14]
+        // [3, 7, 11, 15]
+		// [4, 8, 12, 16]
+        System.out.println("Matrice après mixColumns :");
+        for (int[] ligne : resultatMix) {
+            System.out.println(Arrays.toString(ligne));
+        }
+        // Matrice après mixColumns :
+        // [3, 15, 11, 23]
+        // [4, 8, 12, 16]
+        // [9, 21, 1, 45]
+        // [10, 30, 2, 54]
+        
+        // Test 2 -> Rejet d'une matrice null
+        try {
+            aes.mixColumns(null);
+            System.out.println("Test matrice null : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test matrice null : Réussi");   // Test matrice null : Réussi
+        }
+        
+        // Test 3 -> Rejet d'une matrice de mauvaises dimensions (3 lignes)
+        try {
+            aes.mixColumns(new int[3][4]);
+            System.out.println("Test dimensions 3x4 : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test dimensions 3x4 : Réussi");   // Test dimensions 3x4 : Réussi
+        }
+        
+        // Test 4 -> Rejet d'une ligne avec un nombre incorrect de colonnes
+        try {
+            int[][] matriceMauvaiseLigne = {
+                {1, 2, 3, 4},
+                {1, 2, 3, 4},
+                {1, 2, 3, 4},
+                {1, 2, 3} // seulement 3 colonnes ici
+            };
+            aes.mixColumns(matriceMauvaiseLigne);
+            System.out.println("Test ligne incomplète : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test ligne incomplète : Réussi");   // Test ligne incomplète : Réussi
+        }
+        
+        // Test 5 -> Rejet d'un octet invalide (> 255)
+        try {
+            int[][] matriceInvalide = {
+                {256, 2, 3, 4},
+                {1, 2, 3, 4},
+                {1, 2, 3, 4},
+                {1, 2, 3, 4}
+            };
+            aes.mixColumns(matriceInvalide);
+            System.out.println("Test octet > 255 : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Test octet > 255 : Réussi");   // Test octet > 255 : Réussi
+        }
+        System.out.println();
 		
     }
 }
