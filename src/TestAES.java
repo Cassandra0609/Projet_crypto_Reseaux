@@ -682,6 +682,45 @@ public class TestAES {
 		} catch (IllegalArgumentException e) {
 		    System.out.println("Test 7 (valeur supérieure à 255) : Réussi");    // Test 7 (valeur supérieure à 255) : Réussi
 		}
-		
-		    }
+		System.out.println();
+        
+        
+        
+        /*
+         * Test de la seizieme methode trois_a
+         */
+        System.out.println("Tests méthode 16 : ");
+		// Test 1 -> : zéro
+		System.out.println("Test 1 (0x00) : " + (aes.trois_a(0x00) == 0x00 ? "Réussi" : "ÉCHEC"));   // Test 1 (0x00) : Réussi 
+
+		// Test 2 -> un
+		System.out.println("Test 2 (0x01) : " + (aes.trois_a(0x01) == 0x03 ? "Réussi" : "ÉCHEC"));   // Test 2 (0x01) : Réussi
+
+		// Test 3 -> valeur classique
+		System.out.println("Test 3 (0x57) : " + (aes.trois_a(0x57) == 0xF9 ? "Réussi" : "ÉCHEC"));   // Test 3 (0x57) : Réussi
+ 
+		// Test 4 -> bit de poids fort à 1
+		System.out.println("Test 4 (0x80) : " + (aes.trois_a(0x80) == 0x9B ? "Réussi" : "ÉCHEC"));   // Test 4 (0x80) : Réussi
+
+		// Test 5 -> octet maximal
+		System.out.println("Test 5 (0xFF) : " + (aes.trois_a(0xFF) == 0x1A ? "Réussi" : "ÉCHEC"));   // Test 5 (0xFF) : Réussi
+ 
+		// Test 6 -> valeur négative
+		try {
+		    aes.trois_a(-1);
+		    System.out.println("Test 6 (valeur négative) : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+		    System.out.println("Test 6 (valeur négative) : Réussi");   // Test 6 (valeur négative) : Réussi
 		}
+
+		// TEST 7 : valeur supérieure à 255
+		try {
+		    aes.trois_a(256);
+		    System.out.println("Test 7 (valeur supérieure à 255) : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+		    System.out.println("Test 7 (valeur supérieure à 255) : Réussi");   // Test 7 (valeur supérieure à 255) : Réussi
+		}
+		
+    }
+}
+
