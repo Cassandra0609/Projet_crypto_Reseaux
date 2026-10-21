@@ -546,7 +546,6 @@ public class TestAES {
          * Test de la treizieme methode shiftRows
          */
         System.out.println("Tests méthode 13 : ");
-
         // Test 1 -> vérifier le décalage cyclique des lignes
         int[][] state13 = {
         		{0x00, 0x01, 0x02, 0x03},
@@ -604,6 +603,46 @@ public class TestAES {
         	System.out.println("Octet invalide : ÉCHEC");
         } catch (IllegalArgumentException e) {
         	System.out.println("Octet invalide : Réussi");    // Octet invalide : Réussi
+        }
+        System.out.println();
+        
+        
+        /*
+         * Test de la quatorzieme methode shiftRows
+         */
+        System.out.println("Tests méthode 14 : ");
+        // Test 1 -> vérifier le décalage cyclique inverse
+        int[][] state14 = {
+            {0x00, 0x01, 0x02, 0x03},
+            {0x10, 0x11, 0x12, 0x13},
+            {0x20, 0x21, 0x22, 0x23},
+            {0x30, 0x31, 0x32, 0x33}
+        };
+        int[][] attendu14 = {
+            {0x00, 0x01, 0x02, 0x03},
+            {0x13, 0x10, 0x11, 0x12},
+            {0x22, 0x23, 0x20, 0x21},
+            {0x31, 0x32, 0x33, 0x30}
+        };
+        int[][] resultat15 = aes.shiftRowsInv(state14);
+        System.out.println("Décalage inverse correct : " + (Arrays.deepEquals(resultat15, attendu14) ? "Réussi" : "ÉCHEC"));   // Décalage inverse correct : Réussi
+
+        // Test 2 -> vérifier que shiftRowsInv annule shiftRows
+        int[][] apresShift = aes.shiftRows(state14);
+        int[][] retour = aes.shiftRowsInv(apresShift);
+        System.out.println("ShiftRows puis ShiftRowsInv : " + (Arrays.deepEquals(state14, retour) ? "Réussi" : "ÉCHEC"));   // ShiftRows puis ShiftRowsInv : Réussi
+
+        // Test 3 -> vérifier que la matrice originale n'est pas modifiée
+        System.out.println("Matrice originale conservée : " + (state14[1][0] == 0x10 && state14[3][3] == 0x33 ? "Réussi" : "ÉCHEC"));   // Matrice originale conservée : Réussi
+
+        // Test 4 -> vérifier le rejet d'un octet invalide
+        try {
+            int[][] stateInvalide = new int[4][4];
+            stateInvalide[0][0] = 256;
+            aes.shiftRowsInv(stateInvalide);
+            System.out.println("Octet invalide : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Octet invalide : Réussi");   // Octet invalide : Réussi
         }
     }
 }
