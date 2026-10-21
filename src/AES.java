@@ -647,7 +647,19 @@ public class AES {
 	}
 	
 	
-	
+	/**
+	 * Multiplie un octet par 3 dans le corps fini GF(2^8)
+	 * 
+	 * @param a Un octet (entre 0 et 255)
+	 * @return Le résultat de la multiplication par 3 dans GF(2^8)
+	 */
+	private int trois_a (int a) {
+		// Vérifie que l'octet est valide
+		if (a < 0 || a > 255) {
+		    throw new IllegalArgumentException("L'octet doit être compris entre 0 et 255");
+		}
+		return deux_a(a) ^ a;	 // 3*a = 2*a XOR a
+	}
 	
 	
 	
