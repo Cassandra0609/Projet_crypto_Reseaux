@@ -1078,6 +1078,47 @@ public class TestAES {
             System.out.println("Test octet > 255 : Réussi");   // Test octet > 255 : Réussi
         }
         System.out.println();
+        
+        
+        /*
+         * Test de la vingt-quatrieme methode mixColumnsInv
+         */
+        System.out.println("Test méthode 24 : ");
+        int[][] matriceInitiale = {
+            {1, 2, 3, 4},
+            {5, 6, 7, 8},
+            {9, 10, 11, 12},
+            {13, 14, 15, 16}
+        };
+        int[][] matriceMixee = aes.mixColumns(matriceInitiale);
+        int[][] matriceRecuperee = aes.mixColumnsInv(matriceMixee);
+        System.out.println("Matrice originale :");
+        for (int[] ligne : matriceInitiale) {
+            System.out.println(Arrays.toString(ligne));
+        }
+        // Matrice originale :
+        // [1, 2, 3, 4]
+        // [5, 6, 7, 8]
+        // [9, 10, 11, 12]
+        // [13, 14, 15, 16]
+        System.out.println("Matrice après mixColumns :");
+        for (int[] ligne : matriceMixee) {
+            System.out.println(Arrays.toString(ligne));
+        }
+        // Matrice après mixColumns :
+        // [9, 10, 11, 12]
+        // [29, 30, 31, 16]
+        // [1, 2, 3, 36]
+        // [21, 22, 23, 40]
+        System.out.println("Matrice après mixColumnsInv :");
+        for (int[] ligne : matriceRecuperee) {
+            System.out.println(Arrays.toString(ligne));
+        }
+        // Matrice après mixColumnsInv :
+        // [1, 2, 3, 4]
+        // [5, 6, 7, 8]
+        // [9, 10, 11, 12]
+        // [13, 14, 15, 16]
 		
     }
 }
