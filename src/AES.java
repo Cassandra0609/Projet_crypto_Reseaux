@@ -191,6 +191,10 @@ public class AES {
 	 * @return le message orignal sans le bourrage 
 	 */
 	public int [] debourrage(int[] bits) {
+		// Vérifie que bits ne soit pas null
+		if (bits == null) {
+		    throw new IllegalArgumentException("Le tableau de bits ne doit pas être null");
+		}
 		int i = bits.length - 1 ;   // part du dernier bit du tableau
 		// Ignore les 0 ajoutes a la fin
 	    while (i >= 0 && bits[i] == 0) {
