@@ -334,7 +334,7 @@ public class AES {
 	            // Calcule la ligne et la colonne dans sBox
 				int ligne = octet / 16;  // divise l'octet par 16 pour obtenir la ligne de la S-Box
 				int colonne = octet % 16 ;  // calcule le reste de la division par 16 pour obtenir la colonne de la S-Box
-				newState[i][j] = sBox[ligne][colonne];  // range la valeur substituée dans newState, state n'est donc pas modifié
+				newState[i][j] = this.sBox[ligne][colonne];  // range la valeur substituée dans newState, state n'est donc pas modifié
 			}
 		}
 		return newState;
@@ -406,7 +406,7 @@ public class AES {
 		}
 		// Verifie que chaque ligne existe et possède le nombre de colonnes attendu.
 		for (int i = 0; i < 4; i++) {
-		    if (masterKey[i] == null || masterKey[i].length != taille_cle_maitre / 32) {
+		    if (masterKey[i] == null || masterKey[i].length != this.taille_cle_maitre / 32) {
 		    	throw new IllegalArgumentException("La clé maître doit avoir 4 lignes et Nk colonnes");
 		    }
 		}
@@ -436,11 +436,11 @@ public class AES {
 			if (j % Nk == 0) {
 				temp = this.subWord(this.rotWord(temp));
 				// Vérifie que la constante Rcon nécessaire existe
-				if (j / Nk >= Rcon.length) {
+				if (j / Nk >= this.Rcon.length) {
 				    throw new IllegalStateException("Constante Rcon manquante");
 				}
 				// Applique la constante de ronde au premier octet du mot
-				temp[0] ^= Rcon[j / Nk];
+				temp[0] ^= this.Rcon[j / Nk];
 			// Cas particulier de l'AES-256 : une substitution supplémentaire est appliquée lorsque Nk vaut 8 et que l'indice du mot est congru à 4 modulo Nk
 		    }else if (Nk == 8 && (j % Nk == 4)) {
 				temp = this.subWord(temp);
@@ -451,17 +451,17 @@ public class AES {
 			}
 		}
 	    //tableau qui contiendra les clés de toutes les rondes
-		keys = new int[this.nb_ronde + 1][4][4];
+		this.keys = new int[this.nb_ronde + 1][4][4];
 		// Parcourt toutes les clés de ronde, de la clé initiale à la dernière
 	    for (int r = 0; r <= this.nb_ronde; r++) {
 		    for (int i = 0; i < 4; i++) {
 		        for (int j = 0; j < 4; j++) {
-		            keys[r][i][j] = mots[i][4 * r + j]; // Recopie les 4 colonnes correspondant à cette ronde dans une matrice de 4×4
+		            this.keys[r][i][j] = mots[i][4 * r + j]; // Recopie les 4 colonnes correspondant à cette ronde dans une matrice de 4×4
 	                
 		        }
 		    }
 		}
-		return keys;
+		return this.keys;
 	}
 	
 	
@@ -534,7 +534,7 @@ public class AES {
 		        // Calcule la ligne et la colonne dans sBoxInv
 				int ligne = octet / 16;  // divise l'octet par 16 pour obtenir la ligne de la S-Box inverse
 				int colonne = octet % 16 ;  // calcule le reste de la division par 16 pour obtenir la colonne de la S-Box inverse
-				newState[i][j] = sBoxInv[ligne][colonne];  // range la valeur obtenue par la S-Box inverse
+				newState[i][j] = this.sBoxInv[ligne][colonne];  // range la valeur obtenue par la S-Box inverse
 			}
 		}
 		return newState;
@@ -892,17 +892,17 @@ public class AES {
 		// Chaque bloc est chiffré indépendamment
 		for (int i=0; i<blocs.length; i++) {
 			// Tour 0 : AddRoundKey avec K0
-			int[][] S = this.addRoundKey(blocs[i], keys[0]);
+			int[][] S = this.addRoundKey(blocs[i], this.keys[0]);
 			for (int r=1; r<this.nb_ronde;r++) {
 				S = this.subByte(S);
 				S = this.shiftRows(S);
 				S = this.mixColumns(S);
-				S = this.addRoundKey(S, keys[r]);
+				S = this.addRoundKey(S, this.keys[r]);
 			}
 			// Dernier tour : pas de MixColumns
 			S = this.subByte(S);
 			S = this.shiftRows(S);
-			S = this.addRoundKey(S, keys[this.nb_ronde]);
+			S = this.addRoundKey(S, this.keys[this.nb_ronde]);
 			blocs[i] = S;
 		}
 		//Réassemblage de tous les blocs en un tableau de bits 
