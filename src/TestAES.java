@@ -1161,36 +1161,37 @@ public class TestAES {
          * Test de la vingt-sixieme methode decrypte
          */
         System.out.println("Test méthode 26 : ");
-        try {
-            System.out.println("=== TEST FINAL : CHIFFREMENT ET DÉCHIFFREMENT AES ===");
-            System.out.println("-> Instance AES-128 initialisée avec succès.");
-            
-            // 2. Message original
-            String messageOriginal = "Bonjour, ceci est un test secret de l'algorithme AES en Java !";
-            System.out.println("\n[Message clair d'origine] : " + messageOriginal);
-            
-            // 3. Chiffrement
-            int[] messageChiffre = aes.crypte(messageOriginal);
-            System.out.println("[Chiffrement] -> Terminé ! Nombre de bits chiffrés : " + messageChiffre.length);
-            
-            // 4. Déchiffrement
-            String messageDechiffre = aes.decrypte(messageChiffre);
-            System.out.println("[Déchiffrement] -> Terminé !");
-            
-            // 5. Comparaison
-            System.out.println("\n[Message déchiffré obtenu] : " + messageDechiffre);
-            
-            if (messageOriginal.equals(messageDechiffre)) {
-                System.out.println("\n🎉 SUCCÈS TOTAL : Le message déchiffré est strictement identique à l'original !");
-            } else {
-                System.out.println("\n❌ ERREUR : Les messages ne correspondent pas.");
-            }
-            
-        } catch (Exception e) {
-            System.err.println("ERREUR LORS DU TEST : " + e.getMessage());
-            e.printStackTrace();
-        }
-     
+        // Test 1 -> message vide
+		String message26 = "";
+		int[] chiffre26 = aes.crypte(message26);
+		String dechiffre26 = aes.decrypte(chiffre26);
+		System.out.println("Test 1 (message vide) : " + (message26.equals(dechiffre26) ? "Réussi" : "ÉCHEC"));  // Test 1 (message vide) : Réussi
+		
+		// Test 2 -> message très court
+		String message27 = "A";
+		int[] chiffre2 = aes.crypte(message27);
+		String dechiffre2 = aes.decrypte(chiffre2);
+		System.out.println("Test 2 (message court) : " + (message27.equals(dechiffre2) ? "Réussi" : "ÉCHEC"));   // Test 2 (message court) : Réussi
+		
+		// Test 3 -> message classique
+		String message28 = "Bonjour AES !";
+		int[] chiffre3 = aes.crypte(message28);
+		String dechiffre3 = aes.decrypte(chiffre3);
+		System.out.println("Test 3 (message classique) : " + (message28.equals(dechiffre3) ? "Réussi" : "ÉCHEC"));   // Test 3 (message classique) : Réussi
+		
+		// Test 4 -> caractères accentués
+		String message29 = "Été, café et Noël !";
+		int[] chiffre4 = aes.crypte(message29);
+		String dechiffre4 = aes.decrypte(chiffre4);
+		System.out.println("Test 4 (accents) : " + (message29.equals(dechiffre4) ? "Réussi" : "ÉCHEC"));    //Test 4 (accents) : Réussi
+		
+		// Test 5 -> message suffisamment long pour plusieurs blocs
+		String message30 = "Ce message est suffisamment long pour utiliser plusieurs blocs AES.";	
+		int[] chiffre5 = aes.crypte(message30);
+		String dechiffre5 = aes.decrypte(chiffre5);	
+		System.out.println("Test 5 (plusieurs blocs) : " + (message30.equals(dechiffre5) ? "Réussi" : "ÉCHEC"));   // Test 5 (plusieurs blocs) : Réussi
+        
+        
 		
     }
 }
