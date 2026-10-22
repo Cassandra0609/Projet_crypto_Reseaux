@@ -164,12 +164,22 @@ public class AES {
 
 	/**
 	 * Permet d'ajouter un bourrage pour que la taille du message soit un multiple de 128 bits
-	 * Chaque octet ajouté vaut le nombre d'octets ajoutés, ce qui permet plus tard au débourrage de savoir combien en retirer
-	 *
-	 * @param bits
+	 * Le bourrage commence par un bit 1, suivi de bits 0
+	 * 
+	 * @param bits Le message original représenté en bits
 	 * @return le tableau contennat le message original en bits + le bourrage
 	 */
 	public int [] bourrage(int[] bits) {
+		// Vérifie que le tableau bits ne soit pas null
+		if (bits == null) {
+		    throw new IllegalArgumentException("Le tableau de bits ne doit pas être nulll");
+		}
+		// Vérifie que les éléments du tableau bits soient bien des bits (1 ou 0)
+		for (int bit : bits) {
+		    if (bit != 0 && bit != 1) {
+		        throw new IllegalArgumentException("Chaque élément doit être égal à 0 ou 1");
+		    }
+		}
 		int reste = bits.length % 128;
 		int bitsAAjouter = 128 - reste;  // calcule combien de bits il faut ajouter pour atteindre le prochain multiple de 128
 		int [] resultat = new int [bits.length + bitsAAjouter]; // tab qui contiendra le message + le bourrage
