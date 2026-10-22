@@ -67,7 +67,7 @@ public class AES {
 	private int taille_cle_maitre;
 	private int nb_ronde;
 	private int [][] master_Key;
-	private int [][] keys;
+	private int[][][] keys;
 	
 	/**
 	 * Constructor
@@ -89,7 +89,8 @@ public class AES {
 		else {
 			this.nb_ronde = 14;
 		}
-		
+		this.genereMasterKey();
+		this.createKeys(this.master_Key);
 	}
 	
 	
@@ -412,7 +413,7 @@ public class AES {
 		// Nk représente le nombre de mots de 32 bits dans la clé maître. Chaque mot contient 4 octets soit 32 bits
 		int Nk = this.taille_cle_maitre / 32;
 		// matrice qui contiendra tous les mots de la clé étendue
-	    keys = new int[4][4 * (this.nb_ronde + 1)];
+	    int [][] mots = new int[4][4 * (this.nb_ronde + 1)];
 	    // Copie les mots de la clé maître au début de la clé étendue
 		for (int i = 0; i < 4; i++) {
 		    for (int j = 0; j < Nk; j++) {
@@ -421,17 +422,17 @@ public class AES {
 				if (octet < 0 || octet > 255) {
 				    throw new IllegalArgumentException("Chaque octet de la clé maitre doit être compris entre 0 et 255");
 				}
-				keys[i][j] = octet;
+				mots[i][j] = octet;
 		    }
 		}
 		// Calcule les mots suivants de la clé étendue à partir des mots déjà calculés, jusqu'à obtenir toutes les clés nécessaires
 	    for (int j = Nk; j < 4*(this.nb_ronde + 1); j++) {
 	    	// Récupère le mot précédent qui est composé de 4 octets
 	        int [] temp = new int [4];
-			temp[0] = keys[0][j - 1];
-			temp[1] = keys[1][j - 1];
-			temp[2] = keys[2][j - 1];
-			temp[3] = keys[3][j - 1];
+			temp[0] = mots[0][j - 1];
+			temp[1] = mots[1][j - 1];
+			temp[2] = mots[2][j - 1];
+			temp[3] = mots[3][j - 1];
 			if (j % Nk == 0) {
 				temp = this.subWord(this.rotWord(temp));
 				// Vérifie que la constante Rcon nécessaire existe
@@ -446,21 +447,21 @@ public class AES {
 			}
 			// Calcule le nouveau mot en faisant un XOR entre le mot situé Nk positions avant et le mot temporaire transformé
 			for (int i = 0; i < 4; i++) {
-				keys[i][j] = keys[i][j - Nk] ^ temp[i];
+				mots[i][j] = mots[i][j - Nk] ^ temp[i];
 			}
 		}
 	    //tableau qui contiendra les clés de toutes les rondes
-		int[][][] clesRondes = new int[this.nb_ronde + 1][4][4];
+		keys = new int[this.nb_ronde + 1][4][4];
 		// Parcourt toutes les clés de ronde, de la clé initiale à la dernière
 	    for (int r = 0; r <= this.nb_ronde; r++) {
 		    for (int i = 0; i < 4; i++) {
 		        for (int j = 0; j < 4; j++) {
-		            clesRondes[r][i][j] = keys[i][4 * r + j]; // Recopie les 4 colonnes correspondant à cette ronde dans une matrice de 4×4
+		            keys[r][i][j] = mots[i][4 * r + j]; // Recopie les 4 colonnes correspondant à cette ronde dans une matrice de 4×4
 	                
 		        }
 		    }
 		}
-		return clesRondes;
+		return keys;
 	}
 	
 	
@@ -862,7 +863,7 @@ public class AES {
             for (int i = 0; i < 4; i++) {
                 colonne[i] = state[i][j];
             }
-            // Applique prodAu à la colonne j (produit par la matrice M)
+            // Applique prodAuInv à la colonne j pour effectuer la multiplication par la matrice inverse M⁻¹
             int [] resultat = this.prodAuInv(colonne);
             // Mettre la colonne mélangée dans la nouvelle matrice newState
             for (int i = 0; i < 4; i++) {
@@ -870,6 +871,45 @@ public class AES {
             }
 		}
 		return newState;
+	}
+	
+	
+	
+	/**
+	 * Chiffre un message textuel complet en utilisant l'algorithme AES
+	 * 
+	 * @param message Le texte clair à chiffrer
+	 * @return Un tableau d'entiers représentant le message chiffré
+	 */
+	public int[] crypte (String message) {
+		if (message == null) {
+            throw new IllegalArgumentException("Le message à chiffrer ne peut pas être null");
+        }
+		// Message -> bits, puis bourrage pour obtenir un multiple de 128 bits
+		int[] bits = this.bourrage(this.stringToBits(message));
+		// Découpage en blocs (matrices State 4x4)
+		int[][][] blocs = this.decoupage_en_blocs(bits);
+		// Chaque bloc est chiffré indépendamment
+		for (int i=0; i<blocs.length; i++) {
+			// Tour 0 : AddRoundKey avec K0
+			int[][] S = this.addRoundKey(blocs[i], keys[0]);
+			for (int r=1; r<this.nb_ronde;r++) {
+				S = this.subByte(S);
+				S = this.shiftRows(S);
+				S = this.mixColumns(S);
+				S = this.addRoundKey(S, keys[r]);
+			}
+			// Dernier tour : pas de MixColumns
+			S = this.subByte(S);
+			S = this.shiftRows(S);
+			S = this.addRoundKey(S, keys[this.nb_ronde]);
+			blocs[i] = S;
+		}
+		//Réassemblage de tous les blocs en un tableau de bits 
+		return this.recollage_des_blocs(blocs);
+			
+			
+		
 	}
 	
 	
