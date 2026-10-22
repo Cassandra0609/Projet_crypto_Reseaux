@@ -8,9 +8,11 @@ import java.util.Arrays;
 public class AES {
 	
 	/*
-	 * constants
+	 * Constantes
 	 */
+	/** Taille standard d'un bloc AES en bits */
 	static int taille_bloc = 128;
+	/** Tableau des constantes de ronde utilisées lors de l'expansion de clé */
 	static int [] Rcon = {
 			0x00, // Indice 0 inutilisé
 		    0x01, // RC1
@@ -24,6 +26,7 @@ public class AES {
 		    0x1B, // RC9
 		    0x36  // RC10
 	};
+	/** Table de substitution standard de l'AES pour le chiffrement */
 	static int [][] sBox = {
 			{99,124,119,123,242,107,111,197,48,1,103,43,254,215,171,118},
 			{202,130,201,125,250,89,71,240,173,212,162,175,156,164,114,192},
@@ -42,6 +45,7 @@ public class AES {
 			{225,248,152,17,105,217,142,148,155,30,135,233,206,85,40,223},
 			{140,161,137,13,191,230,66,104,65,153,45,15,176,84,187,22}
 	};
+	/** Table de substitution inverse de l'AES pour le déchiffrement */
 	static int [][] sBoxInv = {
 			{82,9,106,213,48,54,165,56,191,64,163,158,129,243,215,251},
 			{124,227,57,130,155,47,255,135,52,142,67,68,196,222,233,203},
@@ -61,20 +65,24 @@ public class AES {
 			{23,43,4,126,186,119,214,38,225,105,20,99,85,33,12,125}
 	};
 	
+	
 	/*
-	 * attributes
+	 * Attributs de l'instance AES
 	 */
+	/** Taille de la clé maître en bits (128, 192 ou 256) */
 	private int taille_cle_maitre;
+	/** Nombre de rondes nécessaires selon la taille de la clé (10, 12 ou 14) */
 	private int nb_ronde;
+	/** Matrice 4xNk représentant la clé maître initiale */
 	private int [][] master_Key;
+	/** Tableau de matrices 4x4 contenant l'ensemble des clés de ronde générées */
 	private int[][][] keys;
+	
 	
 	/**
 	 * Constructeur de la classe AES
-	 * Initialise la taille de la clé, calcule le nombre de rondes correspondant,
-     * génère une clé maître aléatoire et déploie les clés de ronde.
+	 * Initialise la taille de la clé, calcule le nombre de rondes correspondant génère une clé maître aléatoire et déploie les clés de ronde
      *
-	 * 
 	 * @param tc La taille de la clé maître en bits (doit être 128, 192 ou 256)
 	 * @throws IllegalArgumentException si la taille de clé spécifiée n'est pas valide
 	 */
@@ -99,12 +107,17 @@ public class AES {
 	
 	
 	/**
-	 * Permet de transformer une chaine de caractere en un tableau d'entier (0 et 1)
+	 * Permet de transformer une chaîne de caractère en un tableau d'entier représentant ses bits (0 et 1)
 	 * 
-	 * @param message
-	 * @return le tab de bits representant le message
+	 * @param message Le texte à convertir en binaire (ne doit pas être null)
+	 * @return Un tableau d'entiers contenant la suite de bits représentant le message
+	 * @throws IllegalArgumentException si le message est null
 	 */
 	public int [] stringToBits(String message) {
+		// Vérifie que le message ne soit pas null 
+		if (message == null) {
+            throw new IllegalArgumentException("Le message à convertir ne peut pas être null");
+        }
 		byte [] bytes = message.getBytes(StandardCharsets.UTF_8);  // recupere les octets du mess et les mets sous forme de tableau
 		int[] bits = new int[bytes.length * 8];  //chaque octet contient 8 bits donc il nous faut la taille du mot *8 cases dans notre tableau
 		int index = 0; // compteur pour avancer case par case dans le tableau de bits
@@ -121,13 +134,18 @@ public class AES {
 	
 	
 	/**
-	 * Permet de transforer un tableau d'entier (0 et1) en chaine de caractere
+	 * Permet de transforer un tableau de bits (0 et 1) en une chaîne de caractères
 	 * 
-	 * @param blocs
-	 * @return la chaine de caractere representant le blocs en bits
+	 * @param tableauBits Le tableau d'entiers représentant les bits du message (ne doit pas être null)
+	 * @return La chaîne de caractères correspondante
+	 * @throws IllegalArgumentException si le tableau de bits est null
 	 */
-	public String bitsToString(int[] blocs) {
-		int nombrebytes = blocs.length / 8;   // 8 bits correspondent à 1 octet
+	public String bitsToString(int[] tableauBits) {
+		// Vérifie que le tableau de bits ne soit pas null
+		if (tableauBits == null) {
+            throw new IllegalArgumentException("Le tableau de bits ne peut pas être null");
+        }
+		int nombrebytes = tableauBits.length / 8;   // 8 bits correspondent à 1 octet
 		byte [] bytes = new byte [nombrebytes]; //tab qui va contenir les octets reconstruits
 		int index = 0; // compteur pour avancer case par case dans le tableau de bits
 		// Parcourt chaque octet que l'on doit reconstruire
@@ -135,7 +153,7 @@ public class AES {
 	        byte b = 0;   // Valeur de l'octet que l'on est en train de construire
 	        // Parcourt les 8 bits correspondant à cet octet
 	        for (int j = 0; j < 8; j++) {
-	        	b = (byte) ((b << 1) | blocs[index]);  // Reconstruit l'octet bit par bit en décalant de 1 vers la gauche et en ajoutant le nouveau 0 ou 1
+	        	b = (byte) ((b << 1) | tableauBits[index]);  // Reconstruit l'octet bit par bit en décalant de 1 vers la gauche et en ajoutant le nouveau 0 ou 1
 	        	index ++;
 	        }
 	        bytes[i] = b; // place l'octet reconstruit dans le tableau
@@ -145,15 +163,16 @@ public class AES {
 	
 	
 	/**
-	 * Permet de generer une cle maitre aleatoire de taille choisie (128 ou 192 ou 256)
-	 * 
-	 * @return la cle
+	 * Permet de générer une clé maître aléatoire de la taille configurée (128 ou 192 ou 256)
+	 * La clé est stockée dans l'attribut master_Key de l'instance et retournée
+     *
+	 * @return La matrice 4xNk représentant la clé maître générée
 	 */
 	public int [][] genereMasterKey() {
 		int lignes = 4; // la matrice de l'AES a toujours 4 lignes (4 octets par mot de cle)
 		int colonnes = this.taille_cle_maitre/32;  // 1 mot = 32 bits donc le nombre de colonnes dépend de la taille de la cle
-		int [][] cle = new int [lignes][colonnes]; // Cree la matrice de la cle maitre
-		SecureRandom random = new SecureRandom();  // Generateur aleatoire securise
+		int [][] cle = new int [lignes][colonnes]; // cree la matrice de la cle maitre
+		SecureRandom random = new SecureRandom();  // generateur aleatoire securise
 		// Remplit chaque case avec un octet aléatoire
 		for (int i = 0; i < lignes; i++) {
 			for (int j = 0; j < colonnes; j++) {
@@ -170,8 +189,9 @@ public class AES {
 	 * Permet d'ajouter un bourrage pour que la taille du message soit un multiple de 128 bits
 	 * Le bourrage commence par un bit 1, suivi de bits 0
 	 * 
-	 * @param bits Le message original représenté en bits
-	 * @return le tableau contennat le message original en bits + le bourrage
+	 * @param bits Le message original représenté en bits (ne doit pas être null)
+	 * @return Le tableau contenant le message original en bits suivi du bourrage
+	 * @throws IllegalArgumentException si le tableau de bits est null ou contient des valeurs autres que 0 ou 1
 	 */
 	public int [] bourrage(int[] bits) {
 		// Vérifie que le tableau bits ne soit pas null
@@ -191,7 +211,7 @@ public class AES {
 		for (int i = 0; i < bits.length; i++) {
 		    resultat[i] = bits[i]; // copie les bits du message original
 		}
-		resultat[bits.length] = 1;  // marqueur de fin du message
+		resultat[bits.length] = 1;  // marqueur de fin du message (bit 1)
 		// Les autres cases sont automatiquement remplies de 0 car qaund on crée un tab d'entiers avec new int[...], toutes ses cases sont initialisées à 0
 		return resultat;	
 	}
@@ -201,8 +221,9 @@ public class AES {
 	/**
 	 * Permet de retirer le bourrage ajouté à la fin du message pour retrouver le message original en bits
 	 * 
-	 * @param bits
-	 * @return le message orignal sans le bourrage 
+	 * @param bits Le tableau de bits contenant le message bourré (ne doit pas être null)
+	 * @return Le tableau de bits original sans le bourrage
+	 * @throws IllegalArgumentException si le tableau de bits est null ou si le marqueur de bourrage est absent
 	 */
 	public int [] debourrage(int[] bits) {
 		// Vérifie que bits ne soit pas null
@@ -218,22 +239,21 @@ public class AES {
 	    if (i < 0) {
 	        throw new IllegalArgumentException("Marqueur de bourrage absent");
 	    }
-	    // Le marqueur se trouve a la position i
-	    // Garde uniquement les bits qui le precedent
+	    // Le marqueur se trouve a la position i, on garde uniquement les bits qui le precedent
 	    int[] resultat = new int[i];
 	    for (int j = 0; j < i; j++) {
 	        resultat[j] = bits[j];
 	    }
 	    return resultat;
-		
 	}
 	
 	
 	/**
-	 * Permet de découper le tableau de bits total (message binaire) en un ensemble de blocs (matrices State 4x4)
+	 * Permet de découper le tableau de bits total (message binaire) en un ensemble de blocs sous forme de matrices State 4x4
 	 * 
-	 * @param bitsTotal
-	 * @return
+	 * @param bitsTotal  Le tableau de bits total (doit être un multiple de 128 bits)
+	 * @return Un tableau tridimensionnel contenant l'ensemble des matrices State 4x4 de tous les blocs
+	 * @throws IllegalArgumentException si le tableau est null, si sa longueur n'est pas un multiple de 128 ou s'il contient des valeurs autres que 0 ou 1
 	 */
 	public int [][][] decoupage_en_blocs(int [] bitsTotal) {
 		// Vérifications de bitsTotal
@@ -269,7 +289,6 @@ public class AES {
 			}
 		}
 		return bloc;
-		
 	}
 	
 	
@@ -277,8 +296,9 @@ public class AES {
 	/**
 	 * Permet de réassembler un ensemble de blocs (matrices State) en un seul tableau de bits total
 	 * 
-	 * @param blocs
-	 * @return
+	 * @param blocs Le tableau tridimensionnel contenant les matrices State 4x4 de tous les blocs (ne doit pas être null)
+	 * @return Le tableau unidimensionnel représentant la suite de bits totale
+	 * @throws IllegalArgumentException si le tableau de blocs est null, si un bloc n'est pas une matrice 4x4 ou si un octet est en dehors de l'intervalle [0, 255]
 	 */
 	public int [] recollage_des_blocs(int [][][] blocs) {
 		//Vérifications de blocs
@@ -302,7 +322,7 @@ public class AES {
 		}
 		int totalBits = blocs.length * 128;  // calcule le nombre total de bits : 128 bits par bloc
 		int [] blocTotal = new int [totalBits];   // tableau qui contiendra tous les bits
-		int indexBit = 0; // indique la position du prochain bit à ecrire
+		int indexBit = 0; // indique la position du prochain bit à écrire
 		// Parcourt tous les blocs
 		for (int b=0; b<blocs.length;b++) {
 			// Parcourt la matrice State 4x4 par colonnes
@@ -323,11 +343,12 @@ public class AES {
 	
 	
 	/**
-	 * Realise le XOR entre tab1 et tab2	
+	 * Realise l'opération logique XOR entre deux tableaux d'entiers
 	 * 
-	 * @param tab1
-	 * @param tab2
-	 * @return Le resultat du xor des 2 tab passés en param
+	 * @param tab1 Le premier tableau de bits (ne doit pas être null)
+	 * @param tab2 Le deuxième tableau de bits (ne doit pas être null et doit avoir la même longueur que tab1)
+	 * @return Le resultat du xor des 2 (un nouveau tableau d'entiers)
+	 * @throws IllegalArgumentException si l'un des tableaux est null ou s'ils n'ont pas la même longueur
 	 */
 	public int [] xor(int[] tab1, int[] tab2 ) {
 		// Verifie qu'aucun des deux tableaux n'est null
@@ -349,10 +370,11 @@ public class AES {
 	
 	
 	/**
-	 * Permet de parcourir les octets de l'etat AES et remplacer chacun par la valeur correspondante dans sBox
+	 * Permet de parcourir les octets de l'etat AES (State) et remplacer chacun par la valeur correspondante dans sBox
 	 * 
-	 * @param state La matrice d'état 4x4
+	 * @param state La matrice d'état 4x4 à transformer (ne doit pas être null)
 	 * @return Une nouvelle matrice State transformée
+	 * @throws IllegalArgumentException si la matrice est null, si elle n'est pas de dimension 4x4 ou si l'un des octets est hors de l'intervalle [0, 255]
 	 */
 	public int [][] subByte (int [][] state){
 		// Verifie que la matrice n'est pas null
@@ -392,8 +414,9 @@ public class AES {
 	/**
 	 * Effectue une rotation circulaire vers la gauche sur un mot de 4 octets
 	 * 
-	 * @param mot Le mot de 4 octets
-	 * @return Un nouveau mot avec les octets décalés
+	 * @param mot Le mot de 4 octets (ne doit pas être null et doit contenir exactement 4 éléments)
+	 * @return Un nouveau tableau représentant le mot avec les octets décalés d'une position vers la gauche
+	 * @throws IllegalArgumentException si le mot est null ou si sa longueur est différente de 4
 	 */
 	public int [] rotWord (int [] mot) {
 		 // Verifie que mot n'est pas null et contient exactement 4 octets
@@ -410,10 +433,11 @@ public class AES {
 	
 	
 	/**
-	 * Applique la S-box sur les 4 octets d'un mot.
+	 * Applique la S-box sur les 4 octets d'un mot
 	 * 
-	 * @param mot Le mot de 4 octets
-	 * @return Un nouveau mot transformé par la S-box
+	 * @param mot Le mot de 4 octets (ne doit pas être null et doit contenir exactement 4 éléments)
+	 * @return Un nouveau tableau représentant le mot transformé par la S-Box
+	 * @throws IllegalArgumentException si le mot est null, si sa longueur n'est pas 4 ou si un octet est hors de l'intervalle [0, 255]
 	 */
 	public int [] subWord(int []mot) {
 		 // Verifie que mot n'est pas null et contient exactement 4 octets
@@ -442,9 +466,7 @@ public class AES {
 	 * 
 	 * @param masterKey La matrice de la clé maître (4 lignes, et Nk colonnes : 4, 6 ou 8).
 	 * @return Un tableau de matrices 4x4 représentant les clés pour chaque ronde
-	 * @throws IllegalArgumentException si la clé maître est nulle, si ses
-	 *         dimensions sont incorrectes ou si un octet n'est pas compris
-	 *         entre 0 et 255.
+	 * @throws IllegalArgumentException si la clé maître est nulle, si ses dimensions sont incorrectes ou si un octet n'est pas compris entre 0 et 255.
 	 * @throws IllegalStateException si une constante Rcon nécessaire est absente.
 	 */
 	public int [][][] createKeys(int [][] masterKey) {
@@ -517,9 +539,10 @@ public class AES {
 	/**
 	 * Permet d'appliquer la clé de ronde sur la matrice d'état (XOR octet par octet)
      *
-	 * @param state La matrice d'état 4x4
-	 * @param cleRonde La matrice de clé de ronde 4x4
+	 * @param state La matrice d'état 4x4 (ne doit pas être null)
+	 * @param cleRonde La matrice de clé de ronde 4x4 (ne doit pas être null)
 	 * @return Une nouvelle matrice State après application du XOR avec la clé de ronde
+	 * @throws IllegalArgumentException si l'une des matrices est null, si leurs dimensions ne sont pas 4x4 ou si un octet est hors de l'intervalle [0, 255]
 	 */
 	public int [][] addRoundKey (int [][] state, int [][] cleRonde){
 		// Verifie que les matrices ne sont pas nulles
@@ -552,8 +575,9 @@ public class AES {
 	/**
 	 * Permet d'appliquer la substitution inverse sur la matrice d'état
      *
-	 * @param state La matrice d'état 4x4
+	 * @param state La matrice d'état 4x4 à transformer (ne doit pas être null)
 	 * @return Une nouvelle matrice State transformée par la S-box inverse
+	 * @throws IllegalArgumentException si la matrice est null, si elle n'est pas de dimension 4x4 ou si l'un des octets est hors de l'intervalle [0, 255]
 	 */
 	public int [][] subByteInv (int [][] state){
 		// Verifie que la matrice n'est pas null
@@ -594,8 +618,9 @@ public class AES {
 	 * Effectue le décalage cyclique des lignes de la matrice d'état
 	 * La première ligne n'est pas décalée. Les lignes suivantes sont décalées respectivement d'une, deux et trois positions vers la gauche
 	 * 
-	 * @param state La matrice d'état 4x4
+	 * @param state La matrice d'état 4x4 à transformer (ne doit pas être null)
 	 * @return Une nouvelle matrice State après décalage des lignes
+	 * @throws IllegalArgumentException si la matrice est null, si elle n'est pas de dimension 4x4 ou si un octet est hors de l'intervalle [0, 255]
 	 */
 	public int [][] shiftRows (int [][] state){
 		// Verifie que la matrice n'est pas null
@@ -634,8 +659,9 @@ public class AES {
 	 * Effectue le décalage cyclique inverse des lignes de la matrice d'état
      * La première ligne n'est pas décalée. Les lignes suivantes sont décalées respectivement d'une, deux et trois positions vers la droite
      *
-	 * @param state La matrice d'état 4x4
+	 * @param state La matrice d'état 4x4 à transformer (ne doit pas être null)
 	 * @return Une nouvelle matrice State après décalage inverse des lignes
+	 * @throws IllegalArgumentException si la matrice est null, si elle n'est pas de dimension 4x4 ou si un octet est hors de l'intervalle [0, 255]
 	 */
 	public int [][] shiftRowsInv (int [][] state){
 		// Verifie que la matrice n'est pas null
@@ -676,6 +702,7 @@ public class AES {
      *
 	 * @param a Un octet (entre 0 et 255)
 	 * @return Le résultat de la multiplication par 2 dans GF(2^8)
+	 * @throws IllegalArgumentException si l'octet n'est pas compris entre 0 et 255
 	 */
 	public int deux_a (int a) {
 		// Vérifie que l'octet est valide
@@ -701,6 +728,7 @@ public class AES {
 	 * 
 	 * @param a Un octet (entre 0 et 255)
 	 * @return Le résultat de la multiplication par 3 dans GF(2^8)
+	 * @throws IllegalArgumentException si l'octet n'est pas compris entre 0 et 255
 	 */
 	public int trois_a (int a) {
 		// Vérifie que l'octet est valide
@@ -714,8 +742,11 @@ public class AES {
 	
 	/**
 	 * Multiplie un octet par 9 dans le corps fini GF(2^8) (9 = 8 + 1, et l’addition dans GF(2^8) est le XOR)
+	 * 
 	 * @param a Un octet (entre 0 et 255)
 	 * @return Le résultat de la multiplication par 9 dans GF(2^8)
+	 * @throws IllegalArgumentException si l'octet n'est pas compris entre 0 et 255
+	 * 
 	 */
 	public int neuf_a (int a) {
 		// Vérifie que l'octet est valide
@@ -731,8 +762,10 @@ public class AES {
 	
 	/**
 	 * Multiplie un octet par 11 dans le corps fini GF(2^8) (11 = 8 + 2 + 1)
+	 * 
 	 * @param a Un octet (entre 0 et 255)
 	 * @return Le résultat de la multiplication par 11 dans GF(2^8)
+	 * @throws IllegalArgumentException si l'octet n'est pas compris entre 0 et 255
 	 */
 	public int onze_a (int a) {
 		// Vérifie que l'octet est valide
@@ -748,8 +781,10 @@ public class AES {
 	
 	/**
 	 * Multiplie un octet par 13 dans le corps fini GF(2^8) (13 = 8 + 4 + 1  soit 9 + 4)
+	 *
 	 * @param a Un octet (entre 0 et 255)
 	 * @return Le résultat de la multiplication par 13 dans GF(2^8)
+	 * @throws IllegalArgumentException si l'octet n'est pas compris entre 0 et 255
 	 */
 	public int treize_a (int a) {
 		// Vérifie que l'octet est valide
@@ -764,8 +799,10 @@ public class AES {
 	
 	/**
 	 * Multiplie un octet par 14 dans le corps fini GF(2^8) (14 = 8 + 4 + 2 )
+	 * 
 	 * @param a Un octet (entre 0 et 255)
 	 * @return Le résultat de la multiplication par 14 dans GF(2^8)
+	 * @throws IllegalArgumentException si l'octet n'est pas compris entre 0 et 255
 	 */
 	public int quatorze_a (int a) {
 		// Vérifie que l'octet est valide
@@ -783,8 +820,9 @@ public class AES {
 	/**
 	 * Permet de multiplier une colonne d'octets par la matrice M pour l'étape MixColumns
 	 * 
-	 * @param c La colonne de 4 octets
-	 * @return Une nouvelle colonne apres multiplication des octet
+	 * @param c La colonne de 4 octets à transformer (ne doit pas être null)
+	 * @return Une nouvelle colonne de 4 octets après multiplication matricielle dans GF(2^8)
+	 * @throws IllegalArgumentException si la colonne est null, si sa longueur n'est pas de 4 ou si un octet est hors de l'intervalle [0, 255]
 	 */
 	public int [] prodAu(int[]c) {
 		// Verifie que la colonne n'est pas null
@@ -812,9 +850,11 @@ public class AES {
 	
 	
 	/**
-	 * Permet de multiplie une colonne par la matrice inverse M⁻¹, utilisée au déchiffrement
-	 * @param c La colonne de 4 octets
-	 * @return Une nouvelle colonne après la multiplication
+	 * Permet de multiplier une colonne par la matrice inverse M⁻¹, utilisée au déchiffrement
+	 * 
+	 * @param c La colonne de 4 octets à transformer (ne doit pas être null)
+	 * @return Une nouvelle colonne de 4 octets après la multiplication dans GF(2^8)
+	 * @throws IllegalArgumentException si la colonne est null, si sa longueur n'est pas de 4 ou si un octet est hors de l'intervalle [0, 255]
 	 */
 	public int [] prodAuInv (int[]c) {
 		// Verifie que la colonne n'est pas null
@@ -844,8 +884,9 @@ public class AES {
 	/**
 	 * Permet de transformer chaque colonne de la matrice d'état 4x4 indépendamment
      *
-	 * @param state La matrice d'état (4x4)
-	 * @return Une nouvelle matrice d'état après le mélange global
+	 * @param state La matrice d'état 4x4 à transformer (ne doit pas être null)
+	 * @return Une nouvelle matrice State après le mélange global des colonnes
+	 * @throws IllegalArgumentException si la matrice est null, si elle n'est pas de dimension 4x4 ou si un octet est invalide
 	 */
 	public int[][] mixColumns (int[][] state){
 		// Verifie que la matrice n'est pas null
@@ -885,8 +926,9 @@ public class AES {
 	/**
 	 * Permet de transformer chaque colonne de la matrice d'état 4x4 indépendamment
      *
-	 * @param state La matrice d'état (4x4)
-	 * @return Une nouvelle matrice d'état après le mélange global
+	 * @param state La matrice d'état 4x4 à transformer (ne doit pas être null)
+	 * @return Une nouvelle matrice State après le mélange inverse global des colonnes
+	 * @throws IllegalArgumentException si la matrice est null, si elle n'est pas de dimension 4x4 ou si un octet est invalide
 	 */
 	public int[][] mixColumnsInv (int[][] state){
 		// Verifie que la matrice n'est pas null
@@ -926,21 +968,23 @@ public class AES {
 	/**
 	 * Chiffre un message textuel complet en utilisant l'algorithme AES
 	 * 
-	 * @param message Le texte clair à chiffrer
-	 * @return Un tableau d'entiers représentant le message chiffré
+	 * @param message Le texte clair à chiffrer (ne doit pas être null)
+	 * @return Un tableau d'entiers représentant les bits du message chiffré
+	 * @throws IllegalArgumentException si le message est null
 	 */
 	public int[] crypte (String message) {
 		if (message == null) {
             throw new IllegalArgumentException("Le message à chiffrer ne peut pas être null");
         }
-		// Message -> bits, puis bourrage pour obtenir un multiple de 128 bits
+		// Convertit le message en bits, puis applique le bourrage pour obtenir un multiple de 128 bits
 		int[] bits = this.bourrage(this.stringToBits(message));
-		// Découpage en blocs (matrices State 4x4)
+		// Découpe le flux de bits en blocs (matrices State 4x4)
 		int[][][] blocs = this.decoupage_en_blocs(bits);
 		// Chaque bloc est chiffré indépendamment
 		for (int i=0; i<blocs.length; i++) {
-			// Tour 0 : AddRoundKey avec K0
+			// Tour 0 : AddRoundKey avec la clé initiale K0
 			int[][] S = this.addRoundKey(blocs[i], this.keys[0]);
+			// Tours intermédiaires
 			for (int r=1; r<this.nb_ronde;r++) {
 				S = this.subByte(S);
 				S = this.shiftRows(S);
@@ -953,7 +997,7 @@ public class AES {
 			S = this.addRoundKey(S, this.keys[this.nb_ronde]);
 			blocs[i] = S;
 		}
-		//Réassemblage de tous les blocs en un tableau de bits 
+		// // Réassemble tous les blocs chiffrés en un unique tableau de bits
 		return this.recollage_des_blocs(blocs);
 	}
 	
@@ -962,8 +1006,9 @@ public class AES {
 	/**
 	 * Déchiffre un message binaire chiffré pour retrouver le texte clair original.
      *
-	 * @param messageEnBits Le tableau de bits chiffré
-	 * @return Le texte clair déchiffré
+	 * @param messageEnBits Le tableau de bits chiffré (ne doit pas être null, longueur multiple de 128)
+	 * @return Le texte clair déchiffré sous forme de chaîne de caractères
+	 * @throws IllegalArgumentException si le message est null, si un bit n'est pas 0 ou 1 ou si la longueur n'est pas un multiple de 128 bits
 	 */ 
 	public String decrypte(int [] messageEnBits) {
 		// Vérifie que le tableau bits ne soit pas null
