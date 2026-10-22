@@ -263,6 +263,25 @@ public class AES {
 	 * @return
 	 */
 	public int [] recollage_des_blocs(int [][][] blocs) {
+		//Vérifications de blocs
+		if (blocs == null) {
+		    throw new IllegalArgumentException("Le tableau de blocs ne doit pas être null");
+		}
+		for (int b = 0; b < blocs.length; b++) {
+		    if (blocs[b] == null || blocs[b].length != 4) {
+		        throw new IllegalArgumentException("Chaque bloc doit avoir 4 lignes");
+		    }
+		    for (int i = 0; i < 4; i++) {
+		        if (blocs[b][i] == null || blocs[b][i].length != 4) {
+		            throw new IllegalArgumentException("Chaque bloc doit être une matrice 4x4");
+		        }
+		        for (int j = 0; j < 4; j++) {
+		            if (blocs[b][i][j] < 0 || blocs[b][i][j] > 255) {
+		                throw new IllegalArgumentException("Chaque octet doit être compris entre 0 et 255");
+		            }
+		        }
+		    }
+		}
 		int totalBits = blocs.length * 128;  // calcule le nombre total de bits : 128 bits par bloc
 		int [] blocTotal = new int [totalBits];   // tableau qui contiendra tous les bits
 		int indexBit = 0; // indique la position du prochain bit à ecrire
@@ -281,8 +300,7 @@ public class AES {
 				}
 			}
 		}
-		return blocTotal;
-		
+		return blocTotal;	
 	}
 	
 	
