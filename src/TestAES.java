@@ -316,7 +316,7 @@ public class TestAES {
         /*
 	     * Test method rotWord
 	     */
-        System.out.println("Tests de subWord :");
+        System.out.println("Tests de rotWord :");
 
         // Test 1 -> vérifier la rotation circulaire
         int[] mot = {0x09, 0xCF, 0x4F, 0x3C};
@@ -379,7 +379,7 @@ public class TestAES {
         	aes.subWord(new int[]{0x09, 0xCF, 0x4F});
         	System.out.println("Test 4 : ECHEC");
         } catch (IllegalArgumentException e) {
-        	System.out.println("Test 4 : réussi");   // Test 3 : réussi
+        	System.out.println("Test 4 : réussi");   // Test 4 : réussi
         }
 
         // Test 5 -> vérifier un octet supérieur à 255
@@ -387,7 +387,7 @@ public class TestAES {
         	aes.subWord(new int[]{0x09, 0xCF, 0x4F, 256});
         	System.out.println("Test 5 : ECHEC");
         } catch (IllegalArgumentException e) {
-        	System.out.println("Test 5 : réussi");   // Test 3 : réussi
+        	System.out.println("Test 5 : réussi");   // Test 5 : réussi
         }
 
         // Test 6 -> vérifier un octet négatif
@@ -395,7 +395,7 @@ public class TestAES {
         	aes.subWord(new int[]{0x09, 0xCF, 0x4F, -1});
         	System.out.println("Test 6 : ECHEC");
         } catch (IllegalArgumentException e) {
-        	System.out.println("Test 6 : réussi");   // Test 3 : réussi
+        	System.out.println("Test 6 : réussi");   // Test 6 : réussi
         } 
         System.out.println();
         
@@ -1222,9 +1222,40 @@ public class TestAES {
 		} catch (IllegalArgumentException e) {
 		    System.out.println("Test 8 (bit invalide) : Réussi");
 		}
+		System.out.println();
 		
+		// Test 9 : aller-retour crypte et decrypte pour 128, 192 et 256
+		System.out.println("Tests complémentaires : ");
+		int[] tailles = {128, 192, 256};
+		AES[] instances = {aes128, aes192, aes256};
+		for (int z = 0; z < 3; z++) {
+		    for (String m : new String[]{"", "A", "Été, café et Noël !", "1234567890123456"}) {
+		        boolean reussi = instances[z].decrypte(instances[z].crypte(m)).equals(m);
+		        System.out.println("AES-" + tailles[z] + " \"" + m + "\" : " + (reussi ? "Réussi" : "ÉCHEC"));
+		    }
+		}
 		
-		
+		// Test 10 : vecteur officiel FIPS 197 (AES-128)
+		int[][] cle10 = new int[4][4], pt = new int[4][4];
+		for (int i = 0; i < 4; i++)
+		    for (int j = 0; j < 4; j++) {
+		        cle10[i][j] = 4 * j + i; 
+		        pt[i][j] = (4 * j + i) * 0x11;
+		    }
+		AES a = new AES(128);
+		int[][][] k = a.createKeys(cle10);
+		int[][] S = a.addRoundKey(pt, k[0]);
+		for (int r = 1; r < 10; r++) {
+		    S = a.addRoundKey(a.mixColumns(a.shiftRows(a.subByte(S))), k[r]);
+		}
+		S = a.addRoundKey(a.shiftRows(a.subByte(S)), k[10]);
+		int[] attendu10 = {0x69,0xc4,0xe0,0xd8,0x6a,0x7b,0x04,0x30,0xd8,0xcd,0xb7,0x80,0x70,0xb4,0xc5,0x5a};
+		boolean ok10 = true;
+		for (int i = 0; i < 4; i++)
+		    for (int j = 0; j < 4; j++)
+		        if (S[i][j] != attendu10[4 * j + i]) ok10 = false;
+		System.out.println("Vecteur FIPS 197 AES-128 : " + (ok10 ? "Réussi" : "ÉCHEC"));   // Vecteur FIPS 197 AES-128 : Réussi
+
     }
 }
 
