@@ -1123,6 +1123,10 @@ public class TestAES {
         
         
       
+        /*
+         * Test de la vingt-cinquieme methode crypte
+         */
+        System.out.println("Test méthode 25 : ");
         try {
             System.out.println("--- Début du test de chiffrement AES ---");
             System.out.println("1. Instance AES-128 créée et clé maître générée avec succès.");
@@ -1147,6 +1151,43 @@ public class TestAES {
             
         } catch (Exception e) {
             System.err.println("ERREUR lors du test : " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        
+        
+        
+        /*
+         * Test de la vingt-sixieme methode decrypte
+         */
+        System.out.println("Test méthode 26 : ");
+        try {
+            System.out.println("=== TEST FINAL : CHIFFREMENT ET DÉCHIFFREMENT AES ===");
+            System.out.println("-> Instance AES-128 initialisée avec succès.");
+            
+            // 2. Message original
+            String messageOriginal = "Bonjour, ceci est un test secret de l'algorithme AES en Java !";
+            System.out.println("\n[Message clair d'origine] : " + messageOriginal);
+            
+            // 3. Chiffrement
+            int[] messageChiffre = aes.crypte(messageOriginal);
+            System.out.println("[Chiffrement] -> Terminé ! Nombre de bits chiffrés : " + messageChiffre.length);
+            
+            // 4. Déchiffrement
+            String messageDechiffre = aes.decrypte(messageChiffre);
+            System.out.println("[Déchiffrement] -> Terminé !");
+            
+            // 5. Comparaison
+            System.out.println("\n[Message déchiffré obtenu] : " + messageDechiffre);
+            
+            if (messageOriginal.equals(messageDechiffre)) {
+                System.out.println("\n🎉 SUCCÈS TOTAL : Le message déchiffré est strictement identique à l'original !");
+            } else {
+                System.out.println("\n❌ ERREUR : Les messages ne correspondent pas.");
+            }
+            
+        } catch (Exception e) {
+            System.err.println("ERREUR LORS DU TEST : " + e.getMessage());
             e.printStackTrace();
         }
      

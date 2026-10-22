@@ -972,6 +972,12 @@ public class AES {
 		        throw new IllegalArgumentException("Chaque élément doit être égal à 0 ou 1");
 		    }
 		}
+		// Vérifie que la longueur de messageEnBits est un multiple de 128 sinon le découpage peut échouer
+		if (messageEnBits.length % 128 != 0) {
+		    throw new IllegalArgumentException(
+		        "La longueur du message chiffré doit être un multiple de 128 bits"
+		    );
+		}
 		// Découpage du message chiffré en blocs 4x4
 		int[][][] blocs = this.decoupage_en_blocs(messageEnBits);
 		// Traitement de chaque bloc
