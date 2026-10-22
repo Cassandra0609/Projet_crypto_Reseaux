@@ -218,6 +218,18 @@ public class AES {
 	 * @return
 	 */
 	public int [][][] decoupage_en_blocs(int [] bitsTotal) {
+		// Vérifications de bitsTotal
+		if (bitsTotal == null) {
+		    throw new IllegalArgumentException("Le tableau de bits ne doit pas être null");
+		}
+		if (bitsTotal.length % 128 != 0) {
+		    throw new IllegalArgumentException("La longueur doit être un multiple de 128 bits");
+		}
+		for (int bit : bitsTotal) {
+		    if (bit != 0 && bit != 1) {
+		        throw new IllegalArgumentException("Chaque élément doit être égal à 0 ou 1");
+		    }
+		}
 		int nombre_blocs = bitsTotal.length/128;  // calcule le nombre de blocs de 128 bits
 		//tabl contenant tous les blocs
 		int [][][] bloc = new int [nombre_blocs][4][4]; // chaque case de la matrice contiendra un octet représenté par un entier compris entre 0 et 255
@@ -907,9 +919,6 @@ public class AES {
 		}
 		//Réassemblage de tous les blocs en un tableau de bits 
 		return this.recollage_des_blocs(blocs);
-			
-			
-		
 	}
 	
 	

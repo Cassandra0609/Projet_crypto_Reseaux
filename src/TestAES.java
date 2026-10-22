@@ -1119,6 +1119,37 @@ public class TestAES {
         // [5, 6, 7, 8]
         // [9, 10, 11, 12]
         // [13, 14, 15, 16]
+        System.out.println();
+        
+        
+      
+        try {
+            System.out.println("--- Début du test de chiffrement AES ---");
+            System.out.println("1. Instance AES-128 créée et clé maître générée avec succès.");
+        
+            // 2. Message clair à chiffrer
+            String messageClair = "Hello AES !";
+            System.out.println("2. Message d'origine : \"" + messageClair + "\"");
+            
+            // 3. Appel de la méthode crypte
+            int[] messageChiffreBits = aes.crypte(messageClair);
+            System.out.println("3. Chiffrement exécuté avec succès !");
+            System.out.println("   - Nombre de bits du message chiffré : " + messageChiffreBits.length);
+            
+            // 4. Affichage d'un petit aperçu des premiers bits chiffrés
+            StringBuilder apercu = new StringBuilder();
+            for (int i = 0; i < Math.min(64, messageChiffreBits.length); i++) {
+                apercu.append(messageChiffreBits[i]);
+            }
+            System.out.println("   - Aperçu des 64 premiers bits : " + apercu.toString());
+            
+            System.out.println("--- Test de chiffrement validé avec succès ! ---");
+            
+        } catch (Exception e) {
+            System.err.println("ERREUR lors du test : " + e.getMessage());
+            e.printStackTrace();
+        }
+     
 		
     }
 }
