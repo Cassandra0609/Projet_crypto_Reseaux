@@ -955,6 +955,49 @@ public class AES {
 	
 	
 	
+	/**
+	 * Déchiffre un message binaire chiffré pour retrouver le texte clair original.
+     *
+	 * @param messageEnBits Le tableau de bits chiffré
+	 * @return Le texte clair déchiffré
+	 */ 
+	public String decrypte(int [] messageEnBits) {
+		// Vérifie que le tableau bits ne soit pas null
+		if (messageEnBits == null) {
+		    throw new IllegalArgumentException("Le tableau de bits ne doit pas être nulll");
+		}
+		// Vérifie que les éléments du tableau bits soient bien des bits (1 ou 0)
+		for (int bit : messageEnBits) {
+		    if (bit != 0 && bit != 1) {
+		        throw new IllegalArgumentException("Chaque élément doit être égal à 0 ou 1");
+		    }
+		}
+		// Découpage du message chiffré en blocs 4x4
+		int[][][] blocs = this.decoupage_en_blocs(messageEnBits);
+		// Traitement de chaque bloc
+		for (int i=0; i<blocs.length; i++) {
+			// Tour 0 : AddRoundKey avec la derniere clé
+			int[][] S = this.addRoundKey(blocs[i], this.keys[this.nb_ronde]);
+			S = this.shiftRowsInv(S);
+			S = this.subByteInv(S);
+			for (int r=this.nb_ronde-1; r>=1; r--) {
+				S = this.addRoundKey(S, this.keys[r]);
+				S = this.mixColumnsInv(S);
+				S = this.shiftRowsInv(S);	
+				S = this.subByteInv(S);
+			}
+			// Dernier tour : AddRoundKey avec la clé initiale
+			S = this.addRoundKey(S, this.keys[0]);
+			blocs[i] = S;	
+		}
+		// Réassemblage des blocs, retrait du bourrage, et conversion en String
+		int[] bits = this.recollage_des_blocs(blocs);
+		bits = this.debourrage(bits);
+		return this.bitsToString(bits);
+	}
+	
+	
+	
 	
 	public static void main(String[] args) {
 		
