@@ -70,9 +70,13 @@ public class AES {
 	private int[][][] keys;
 	
 	/**
-	 * Constructor
+	 * Constructeur de la classe AES
+	 * Initialise la taille de la clé, calcule le nombre de rondes correspondant,
+     * génère une clé maître aléatoire et déploie les clés de ronde.
+     *
 	 * 
-	 * @param tcl  (128,192,256)
+	 * @param tc La taille de la clé maître en bits (doit être 128, 192 ou 256)
+	 * @throws IllegalArgumentException si la taille de clé spécifiée n'est pas valide
 	 */
 	public AES(int tcl) {
 		if (tcl != 128 && tcl != 192 && tcl != 256) {
