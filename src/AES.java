@@ -83,7 +83,7 @@ public class AES {
 	 * Constructeur de la classe AES
 	 * Initialise la taille de la clé, calcule le nombre de rondes correspondant génère une clé maître aléatoire et déploie les clés de ronde
      *
-	 * @param tc La taille de la clé maître en bits (doit être 128, 192 ou 256)
+	 * @param tcl La taille de la clé maître en bits (doit être 128, 192 ou 256)
 	 * @throws IllegalArgumentException si la taille de clé spécifiée n'est pas valide
 	 */
 	public AES(int tcl) {
@@ -113,7 +113,7 @@ public class AES {
 	 * @return Un tableau d'entiers contenant la suite de bits représentant le message
 	 * @throws IllegalArgumentException si le message est null
 	 */
-	public int [] stringToBits(String message) {
+	private int [] stringToBits(String message) {
 		// Vérifie que le message ne soit pas null 
 		if (message == null) {
             throw new IllegalArgumentException("Le message à convertir ne peut pas être null");
@@ -140,7 +140,7 @@ public class AES {
 	 * @return La chaîne de caractères correspondante
 	 * @throws IllegalArgumentException si le tableau de bits est null
 	 */
-	public String bitsToString(int[] tableauBits) {
+	private String bitsToString(int[] tableauBits) {
 		// Vérifie que le tableau de bits ne soit pas null
 		if (tableauBits == null) {
             throw new IllegalArgumentException("Le tableau de bits ne peut pas être null");
@@ -168,7 +168,7 @@ public class AES {
      *
 	 * @return La matrice 4xNk représentant la clé maître générée
 	 */
-	public int [][] genereMasterKey() {
+	private int [][] genereMasterKey() {
 		int lignes = 4; // la matrice de l'AES a toujours 4 lignes (4 octets par mot de cle)
 		int colonnes = this.taille_cle_maitre/32;  // 1 mot = 32 bits donc le nombre de colonnes dépend de la taille de la cle
 		int [][] cle = new int [lignes][colonnes]; // cree la matrice de la cle maitre
@@ -193,7 +193,7 @@ public class AES {
 	 * @return Le tableau contenant le message original en bits suivi du bourrage
 	 * @throws IllegalArgumentException si le tableau de bits est null ou contient des valeurs autres que 0 ou 1
 	 */
-	public int [] bourrage(int[] bits) {
+	private int [] bourrage(int[] bits) {
 		// Vérifie que le tableau bits ne soit pas null
 		if (bits == null) {
 		    throw new IllegalArgumentException("Le tableau de bits ne doit pas être nulll");
@@ -225,7 +225,7 @@ public class AES {
 	 * @return Le tableau de bits original sans le bourrage
 	 * @throws IllegalArgumentException si le tableau de bits est null ou si le marqueur de bourrage est absent
 	 */
-	public int [] debourrage(int[] bits) {
+	private int [] debourrage(int[] bits) {
 		// Vérifie que bits ne soit pas null
 		if (bits == null) {
 		    throw new IllegalArgumentException("Le tableau de bits ne doit pas être null");
@@ -255,7 +255,7 @@ public class AES {
 	 * @return Un tableau tridimensionnel contenant l'ensemble des matrices State 4x4 de tous les blocs
 	 * @throws IllegalArgumentException si le tableau est null, si sa longueur n'est pas un multiple de 128 ou s'il contient des valeurs autres que 0 ou 1
 	 */
-	public int [][][] decoupage_en_blocs(int [] bitsTotal) {
+	private int [][][] decoupage_en_blocs(int [] bitsTotal) {
 		// Vérifications de bitsTotal
 		if (bitsTotal == null) {
 		    throw new IllegalArgumentException("Le tableau de bits ne doit pas être null");
@@ -300,7 +300,7 @@ public class AES {
 	 * @return Le tableau unidimensionnel représentant la suite de bits totale
 	 * @throws IllegalArgumentException si le tableau de blocs est null, si un bloc n'est pas une matrice 4x4 ou si un octet est en dehors de l'intervalle [0, 255]
 	 */
-	public int [] recollage_des_blocs(int [][][] blocs) {
+	private int [] recollage_des_blocs(int [][][] blocs) {
 		//Vérifications de blocs
 		if (blocs == null) {
 		    throw new IllegalArgumentException("Le tableau de blocs ne doit pas être null");
@@ -350,7 +350,7 @@ public class AES {
 	 * @return Le resultat du xor des 2 (un nouveau tableau d'entiers)
 	 * @throws IllegalArgumentException si l'un des tableaux est null ou s'ils n'ont pas la même longueur
 	 */
-	public int [] xor(int[] tab1, int[] tab2 ) {
+	private int [] xor(int[] tab1, int[] tab2 ) {
 		// Verifie qu'aucun des deux tableaux n'est null
 		if (tab1 == null || tab2 == null) {
 		    throw new IllegalArgumentException("Les tableaux ne doivent pas être null");
@@ -376,7 +376,7 @@ public class AES {
 	 * @return Une nouvelle matrice State transformée
 	 * @throws IllegalArgumentException si la matrice est null, si elle n'est pas de dimension 4x4 ou si l'un des octets est hors de l'intervalle [0, 255]
 	 */
-	public int [][] subByte (int [][] state){
+	private int [][] subByte (int [][] state){
 		// Verifie que la matrice n'est pas null
 		if (state == null) {
 			throw new IllegalArgumentException("La matrice State ne doit pas être null");
@@ -418,7 +418,7 @@ public class AES {
 	 * @return Un nouveau tableau représentant le mot avec les octets décalés d'une position vers la gauche
 	 * @throws IllegalArgumentException si le mot est null ou si sa longueur est différente de 4
 	 */
-	public int [] rotWord (int [] mot) {
+	private int [] rotWord (int [] mot) {
 		 // Verifie que mot n'est pas null et contient exactement 4 octets
 		if (mot == null || mot.length != 4) {
 			throw new IllegalArgumentException("Un mot doit contenir exactement 4 octets");
@@ -439,7 +439,7 @@ public class AES {
 	 * @return Un nouveau tableau représentant le mot transformé par la S-Box
 	 * @throws IllegalArgumentException si le mot est null, si sa longueur n'est pas 4 ou si un octet est hors de l'intervalle [0, 255]
 	 */
-	public int [] subWord(int []mot) {
+	private int [] subWord(int []mot) {
 		 // Verifie que mot n'est pas null et contient exactement 4 octets
 		if (mot == null || mot.length != 4) {
 	        throw new IllegalArgumentException("Un mot doit contenir exactement 4 octets.");
@@ -469,7 +469,7 @@ public class AES {
 	 * @throws IllegalArgumentException si la clé maître est nulle, si ses dimensions sont incorrectes ou si un octet n'est pas compris entre 0 et 255.
 	 * @throws IllegalStateException si une constante Rcon nécessaire est absente.
 	 */
-	public int [][][] createKeys(int [][] masterKey) {
+	private int [][][] createKeys(int [][] masterKey) {
 		// Verifie que masterKey n'est pas null et contient bien 4 lignes
 		if (masterKey == null || masterKey.length != 4) {
 		    throw new IllegalArgumentException("La clé maître doit contenir exactement 4 lignes");
@@ -544,7 +544,7 @@ public class AES {
 	 * @return Une nouvelle matrice State après application du XOR avec la clé de ronde
 	 * @throws IllegalArgumentException si l'une des matrices est null, si leurs dimensions ne sont pas 4x4 ou si un octet est hors de l'intervalle [0, 255]
 	 */
-	public int [][] addRoundKey (int [][] state, int [][] cleRonde){
+	private int [][] addRoundKey (int [][] state, int [][] cleRonde){
 		// Verifie que les matrices ne sont pas nulles
         if (state == null || cleRonde == null) {
             throw new IllegalArgumentException("Les matrices State et cleRonde ne doivent pas être nulles");
@@ -579,7 +579,7 @@ public class AES {
 	 * @return Une nouvelle matrice State transformée par la S-box inverse
 	 * @throws IllegalArgumentException si la matrice est null, si elle n'est pas de dimension 4x4 ou si l'un des octets est hors de l'intervalle [0, 255]
 	 */
-	public int [][] subByteInv (int [][] state){
+	private int [][] subByteInv (int [][] state){
 		// Verifie que la matrice n'est pas null
 		if (state == null) {
 			throw new IllegalArgumentException("La matrice State ne doit pas être null");
@@ -622,7 +622,7 @@ public class AES {
 	 * @return Une nouvelle matrice State après décalage des lignes
 	 * @throws IllegalArgumentException si la matrice est null, si elle n'est pas de dimension 4x4 ou si un octet est hors de l'intervalle [0, 255]
 	 */
-	public int [][] shiftRows (int [][] state){
+	private int [][] shiftRows (int [][] state){
 		// Verifie que la matrice n'est pas null
 		if (state == null) {
 			throw new IllegalArgumentException("La matrice State ne doit pas être null");
@@ -663,7 +663,7 @@ public class AES {
 	 * @return Une nouvelle matrice State après décalage inverse des lignes
 	 * @throws IllegalArgumentException si la matrice est null, si elle n'est pas de dimension 4x4 ou si un octet est hors de l'intervalle [0, 255]
 	 */
-	public int [][] shiftRowsInv (int [][] state){
+	private int [][] shiftRowsInv (int [][] state){
 		// Verifie que la matrice n'est pas null
 		if (state == null) {
 			throw new IllegalArgumentException("La matrice State ne doit pas être null");
@@ -704,7 +704,7 @@ public class AES {
 	 * @return Le résultat de la multiplication par 2 dans GF(2^8)
 	 * @throws IllegalArgumentException si l'octet n'est pas compris entre 0 et 255
 	 */
-	public int deux_a (int a) {
+	private int deux_a (int a) {
 		// Vérifie que l'octet est valide
 		if (a < 0 || a > 255) {
 		    throw new IllegalArgumentException("L'octet doit être compris entre 0 et 255");
@@ -730,7 +730,7 @@ public class AES {
 	 * @return Le résultat de la multiplication par 3 dans GF(2^8)
 	 * @throws IllegalArgumentException si l'octet n'est pas compris entre 0 et 255
 	 */
-	public int trois_a (int a) {
+	private int trois_a (int a) {
 		// Vérifie que l'octet est valide
 		if (a < 0 || a > 255) {
 		    throw new IllegalArgumentException("L'octet doit être compris entre 0 et 255");
@@ -748,7 +748,7 @@ public class AES {
 	 * @throws IllegalArgumentException si l'octet n'est pas compris entre 0 et 255
 	 * 
 	 */
-	public int neuf_a (int a) {
+	private int neuf_a (int a) {
 		// Vérifie que l'octet est valide
 		if (a < 0 || a > 255) {
 		    throw new IllegalArgumentException("L'octet doit être compris entre 0 et 255");
@@ -767,7 +767,7 @@ public class AES {
 	 * @return Le résultat de la multiplication par 11 dans GF(2^8)
 	 * @throws IllegalArgumentException si l'octet n'est pas compris entre 0 et 255
 	 */
-	public int onze_a (int a) {
+	private int onze_a (int a) {
 		// Vérifie que l'octet est valide
 		if (a < 0 || a > 255) {
 		    throw new IllegalArgumentException("L'octet doit être compris entre 0 et 255");
@@ -786,7 +786,7 @@ public class AES {
 	 * @return Le résultat de la multiplication par 13 dans GF(2^8)
 	 * @throws IllegalArgumentException si l'octet n'est pas compris entre 0 et 255
 	 */
-	public int treize_a (int a) {
+	private int treize_a (int a) {
 		// Vérifie que l'octet est valide
 		if (a < 0 || a > 255) {
 		    throw new IllegalArgumentException("L'octet doit être compris entre 0 et 255");
@@ -804,7 +804,7 @@ public class AES {
 	 * @return Le résultat de la multiplication par 14 dans GF(2^8)
 	 * @throws IllegalArgumentException si l'octet n'est pas compris entre 0 et 255
 	 */
-	public int quatorze_a (int a) {
+	private int quatorze_a (int a) {
 		// Vérifie que l'octet est valide
 		if (a < 0 || a > 255) {
 		    throw new IllegalArgumentException("L'octet doit être compris entre 0 et 255");
@@ -824,7 +824,7 @@ public class AES {
 	 * @return Une nouvelle colonne de 4 octets après multiplication matricielle dans GF(2^8)
 	 * @throws IllegalArgumentException si la colonne est null, si sa longueur n'est pas de 4 ou si un octet est hors de l'intervalle [0, 255]
 	 */
-	public int [] prodAu(int[]c) {
+	private int [] prodAu(int[]c) {
 		// Verifie que la colonne n'est pas null
 		if (c == null) {
 			throw new IllegalArgumentException("La colonne ne doit pas être null");
@@ -856,7 +856,7 @@ public class AES {
 	 * @return Une nouvelle colonne de 4 octets après la multiplication dans GF(2^8)
 	 * @throws IllegalArgumentException si la colonne est null, si sa longueur n'est pas de 4 ou si un octet est hors de l'intervalle [0, 255]
 	 */
-	public int [] prodAuInv (int[]c) {
+	private int [] prodAuInv (int[]c) {
 		// Verifie que la colonne n'est pas null
 		if (c == null) {
 			throw new IllegalArgumentException("La colonne ne doit pas être null");
@@ -888,7 +888,7 @@ public class AES {
 	 * @return Une nouvelle matrice State après le mélange global des colonnes
 	 * @throws IllegalArgumentException si la matrice est null, si elle n'est pas de dimension 4x4 ou si un octet est invalide
 	 */
-	public int[][] mixColumns (int[][] state){
+	private int[][] mixColumns (int[][] state){
 		// Verifie que la matrice n'est pas null
 		if (state == null) {
 			throw new IllegalArgumentException("La matrice State ne doit pas être null");
@@ -930,7 +930,7 @@ public class AES {
 	 * @return Une nouvelle matrice State après le mélange inverse global des colonnes
 	 * @throws IllegalArgumentException si la matrice est null, si elle n'est pas de dimension 4x4 ou si un octet est invalide
 	 */
-	public int[][] mixColumnsInv (int[][] state){
+	private int[][] mixColumnsInv (int[][] state){
 		// Verifie que la matrice n'est pas null
 		if (state == null) {
 			throw new IllegalArgumentException("La matrice State ne doit pas être null");
@@ -997,7 +997,7 @@ public class AES {
 			S = this.addRoundKey(S, this.keys[this.nb_ronde]);
 			blocs[i] = S;
 		}
-		// // Réassemble tous les blocs chiffrés en un unique tableau de bits
+		// Réassemble tous les blocs chiffrés en un unique tableau de bits
 		return this.recollage_des_blocs(blocs);
 	}
 	
