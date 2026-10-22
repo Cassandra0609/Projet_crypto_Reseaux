@@ -1191,7 +1191,33 @@ public class TestAES {
 		String dechiffre5 = aes.decrypte(chiffre5);	
 		System.out.println("Test 5 (plusieurs blocs) : " + (message30.equals(dechiffre5) ? "Réussi" : "ÉCHEC"));   // Test 5 (plusieurs blocs) : Réussi
         
-        
+		// Test 6 -> tableau null
+		try {
+		    aes.decrypte(null);
+		    System.out.println("Test 6 (null) : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+		    System.out.println("Test 6 (null) : Réussi");
+		}
+
+		// Test 7 -> tableau dont la longueur n'est pas un multiple de 128
+		try {
+		    aes.decrypte(new int[127]);
+		    System.out.println("Test 7 (longueur invalide) : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+		    System.out.println("Test 7 (longueur invalide) : Réussi");
+		}
+
+		// Test 8 -> tableau contenant une valeur qui n'est pas un bit
+		int[] mauvaisBit = new int[128];
+		mauvaisBit[10] = 2;
+		try {
+		    aes.decrypte(mauvaisBit);
+		    System.out.println("Test 8 (bit invalide) : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+		    System.out.println("Test 8 (bit invalide) : Réussi");
+		}
+		
+		
 		
     }
 }
