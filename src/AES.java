@@ -494,8 +494,8 @@ public class AES {
 				if (state[i][j] < 0 || state[i][j] > 255 || cleRonde[i][j] < 0 || cleRonde[i][j] > 255) {
 				    throw new IllegalArgumentException("Chaque valeur doit être comprise entre 0 et 255");
 				}
-				newState[i] = this.xor(state[i], cleRonde[i]) ;
 			}
+			newState[i] = this.xor(state[i], cleRonde[i]) ;
 		}
 		return newState;	
 	}
