@@ -344,8 +344,8 @@ public class AES {
 	/**
 	 * Realise l'opération logique XOR entre deux tableaux d'entiers de même longueur
 	 * 
-	 * @param tab1 Le premier tableau de bits (ne doit pas être null)
-	 * @param tab2 Le deuxième tableau de bits (ne doit pas être null et doit avoir la même longueur que tab1)
+	 * @param tab1 Le premier tableau d'entiers (ne doit pas être null)
+	 * @param tab2 Le deuxième tableau d'entiers (ne doit pas être null et doit avoir la même longueur que tab1)
 	 * @return Le resultat du xor des 2 (un nouveau tableau d'entiers)
 	 * @throws IllegalArgumentException si l'un des tableaux est null ou s'ils n'ont pas la même longueur
 	 */
