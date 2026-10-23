@@ -3,7 +3,7 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 
 /**
- * 
+ * Implémentation de l’AES 128/192/256
  */
 public class AES {
 	
@@ -1022,10 +1022,8 @@ public class AES {
 		    }
 		}
 		// Vérifie que la longueur de messageEnBits est un multiple de 128 sinon le découpage peut échouer
-		if (messageEnBits.length % 128 != 0) {
-		    throw new IllegalArgumentException(
-		        "La longueur du message chiffré doit être un multiple de 128 bits"
-		    );
+		if (messageEnBits.length == 0 || messageEnBits.length % 128 != 0) {
+		    throw new IllegalArgumentException("Le message chiffré doit contenir au moins un bloc complet de 128 bits");
 		}
 		// Découpage du message chiffré en blocs 4x4
 		int[][][] blocs = this.decoupage_en_blocs(messageEnBits);
