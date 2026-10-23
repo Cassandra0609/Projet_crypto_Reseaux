@@ -81,7 +81,7 @@ public class AES {
 	
 	/**
 	 * Constructeur de la classe AES
-	 * Initialise la taille de la clé, calcule le nombre de rondes correspondant génère une clé maître aléatoire et déploie les clés de ronde
+	 * Initialise la taille de la clé, calcule le nombre de rondes correspondant et génère une clé maître aléatoire
      *
 	 * @param tcl La taille de la clé maître en bits (doit être 128, 192 ou 256)
 	 * @throws IllegalArgumentException si la taille de clé spécifiée n'est pas valide
@@ -196,7 +196,7 @@ public class AES {
 	private int [] bourrage(int[] bits) {
 		// Vérifie que le tableau bits ne soit pas null
 		if (bits == null) {
-		    throw new IllegalArgumentException("Le tableau de bits ne doit pas être nulll");
+		    throw new IllegalArgumentException("Le tableau de bits ne doit pas être null");
 		}
 		// Vérifie que les éléments du tableau bits soient bien des bits (1 ou 0)
 		for (int bit : bits) {
@@ -204,7 +204,7 @@ public class AES {
 		        throw new IllegalArgumentException("Chaque élément doit être égal à 0 ou 1");
 		    }
 		}
-		int reste = bits.length % 128;
+		int reste = bits.length % this.taille_bloc;
 		int bitsAAjouter = 128 - reste;  // calcule combien de bits il faut ajouter pour atteindre le prochain multiple de 128
 		int [] resultat = new int [bits.length + bitsAAjouter]; // tab qui contiendra le message + le bourrage
 		// Parcourt tous les bits du message original
@@ -260,7 +260,7 @@ public class AES {
 		if (bitsTotal == null) {
 		    throw new IllegalArgumentException("Le tableau de bits ne doit pas être null");
 		}
-		if (bitsTotal.length % 128 != 0) {
+		if (bitsTotal.length % this.taille_bloc != 0) {
 		    throw new IllegalArgumentException("La longueur doit être un multiple de 128 bits");
 		}
 		for (int bit : bitsTotal) {
@@ -268,7 +268,7 @@ public class AES {
 		        throw new IllegalArgumentException("Chaque élément doit être égal à 0 ou 1");
 		    }
 		}
-		int nombre_blocs = bitsTotal.length/128;  // calcule le nombre de blocs de 128 bits
+		int nombre_blocs = bitsTotal.length/this.taille_bloc;  // calcule le nombre de blocs de 128 bits
 		//tabl contenant tous les blocs
 		int [][][] bloc = new int [nombre_blocs][4][4]; // chaque case de la matrice contiendra un octet représenté par un entier compris entre 0 et 255
 		int indexBit = 0; // indique la position du prochain bit à lire dans le tableau bitsTotal.
@@ -320,7 +320,7 @@ public class AES {
 		        }
 		    }
 		}
-		int totalBits = blocs.length * 128;  // calcule le nombre total de bits : 128 bits par bloc
+		int totalBits = blocs.length * this.taille_bloc;  // calcule le nombre total de bits : 128 bits par bloc
 		int [] blocTotal = new int [totalBits];   // tableau qui contiendra tous les bits
 		int indexBit = 0; // indique la position du prochain bit à écrire
 		// Parcourt tous les blocs
@@ -343,7 +343,7 @@ public class AES {
 	
 	
 	/**
-	 * Realise l'opération logique XOR entre deux tableaux d'entiers
+	 * Realise l'opération logique XOR entre deux tableaux d'entiers de même longueur
 	 * 
 	 * @param tab1 Le premier tableau de bits (ne doit pas être null)
 	 * @param tab2 Le deuxième tableau de bits (ne doit pas être null et doit avoir la même longueur que tab1)
