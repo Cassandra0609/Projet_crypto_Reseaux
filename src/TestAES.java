@@ -198,21 +198,28 @@ public class TestAES {
 	    int[] resultat8 = aes.xor(tab1, tab2);
 	    System.out.println(Arrays.toString(resultat8));   //[1, 0, 0, 1]
 	    System.out.println();
-	    /*
+	    
 	    //Test2 -> Tableau de longueur differentes et non null
-	    int [] tab3 = {1, 0, 1, 0} ;
-	    int [] tab4 = {1, 0};
-	    int[] resultat9 = aes.xor(tab3, tab4);
-	    System.out.println(Arrays.toString(resultat9)); 
-	    //Exception in thread "main" java.lang.IllegalArgumentException: Les tableaux doivent avoir la même longueur
-		//at AES.xor(AES.java:253)
-		//at TestAES.main(TestAES.java:189)
-	    */
+	    try {
+    		aes.xor(new int[]{1, 0, 1, 0}, new int[]{1, 0});
+    		System.out.println("XOR avec longueurs différentes : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+    		System.out.println("XOR avec longueurs différentes : Réussi");   // XOR avec longueurs différentes : Réussi
+		}	
+	    
 	    //Test3 -> Tableau de meme longueur differentes vide
 	    int [] tab5 = {} ;
 	    int [] tab6 = {};
 	    int[] resultat10 = aes.xor(tab5, tab6);
 	    System.out.println(Arrays.toString(resultat10)); // []
+	    
+	    // Test4 -> premier tableau null
+	    try {
+	        aes.xor(null, new int[]{1, 0});
+	        System.out.println("XOR avec null : ÉCHEC");
+	    } catch (IllegalArgumentException e) {
+	        System.out.println("XOR avec null : Réussi");   // XOR avec null : Réussi
+	    }
 	    
 	    System.out.println();
 	    
@@ -362,10 +369,13 @@ public class TestAES {
         int[] mot12 = {0x09, 0xCF, 0x4F, 0x3C};
         int[] resultat12 = aes.subWord(mot12);
         System.out.println("Test 1 : " + java.util.Arrays.toString(resultat12));  // Test 1 : [1, 138, 132, 235]
+        int[] resultatAttendu = {0x01, 0x8A, 0x84, 0xEB};
+        System.out.println( "Résultat de subWord : " + (Arrays.equals(resultat12, resultatAttendu)? "Réussi" : "ÉCHEC"));   // Résultat de subWord : Réussi
 
         // Test 2 -> vérifier que le mot original n'est pas modifié
-        System.out.println("Test 2 : " + java.util.Arrays.toString(mot));  // Test 2 : [9, 207, 79, 60]
-
+        System.out.println("Test 2 : " + java.util.Arrays.toString(mot12));  // Test 2 : [9, 207, 79, 60]
+        System.out.println("Mot original conservé : " + (Arrays.equals(mot12, new int[]{0x09, 0xCF, 0x4F, 0x3C}) ? "Réussi" : "ÉCHEC"));    // Mot original conservé : Réussi 
+        
         // Test 3 -> vérifier le rejet de null
         try {
         	aes.subWord(null);
@@ -932,10 +942,12 @@ public class TestAES {
         // Test visuel de la méthode prodAu
         System.out.println("Test visuel méthode prodAu : ");
         int[] colonneATester = {219, 19, 83, 69};
-        int[] resultatVisuel = aes.prodAu(colonneATester);
-        
+        int[] resultatVisuel = aes.prodAu(colonneATester); 
         System.out.println("Colonne d'origine : " + Arrays.toString(colonneATester));     // Colonne d'origine : [219, 19, 83, 69]
         System.out.println("Colonne après prodAu : " + Arrays.toString(resultatVisuel));  // Colonne après prodAu : [142, 77, 161, 188]
+        
+        int[] resultatAttendu = {0x8E, 0x4D, 0xA1, 0xBC};
+        System.out.println("Résultat de prodAu : " + (Arrays.equals(resultatVisuel, resultatAttendu) ? "Réussi" : "ÉCHEC"));   // Résultat de prodAu : Réussi
         System.out.println();
 		
 		
