@@ -43,6 +43,12 @@ public class FenetreAES extends JFrame {
      * Le même objet doit être utilisé pour les deux opérations
      */
     private AES aes;
+    
+    /**
+     * Taille de la clé utilisée lors du dernier chiffrement
+     * La valeur -1 indique qu'aucun chiffrement n'a encore été effectué
+     */
+    private int tailleCleUtilisee = -1;
 	
 	/** Référence vers le fichier .txt d'origine chargé via le bouton Browser
 	 * Cette référence sert notamment à proposer un nom de fichier de sortie.
@@ -206,6 +212,7 @@ public class FenetreAES extends JFrame {
 	} 
 	
 	
+	
 	/**
      * Ouvre un sélecteur de fichiers pour charger un document texte
      *
@@ -226,9 +233,9 @@ public class FenetreAES extends JFrame {
 	            return;
 	        }
             try {
-            	// Lit tout le contenu du fichier textuel et l'affiche dans la zone clair
+            	fichierOriginal = selectedFile;   // Conserve le fichier uniquement si la lecture a réussi
+	            // Lit tout le contenu du fichier textuel et l'affiche dans la zone clair
             	String contenu = Files.readString(fichierOriginal.toPath());
-	            fichierOriginal = selectedFile;   // Conserve le fichier uniquement si la lecture a réussi
 	            zoneClair.setText(contenu);   // Affiche le contenu du fichier dans la zone de saisie
             } catch (Exception e) {
             	// Informe l'utilisateur en cas de problème de lecture
@@ -237,6 +244,7 @@ public class FenetreAES extends JFrame {
             
         }
     }
+    
     
     
     /**
@@ -258,19 +266,15 @@ public class FenetreAES extends JFrame {
                 throw new IllegalArgumentException("Veuillez entrer un texte valide à chiffrer.");
             }
             
-            // Récupère la taille de la clé choisie dans le JComboBox
-            String choixTaille = (String) tailleClé.getSelectedItem();
-            int tailleBits = 128; // Valeur par défaut
-            if (choixTaille != null) {
-                if (choixTaille.contains("192")) {
-                    tailleBits = 192;
-                } else if (choixTaille.contains("256")) {
-                    tailleBits = 256;
-                }
-            }
+            // Récupère la taille de la clé choisie : 128, 192 ou 256 bits
+            int tailleBits = recupererTailleCle();
             
             // Initialise l'objet AES avec la taille choisie
             aes = new AES(tailleBits);
+            
+            // Mémorise la taille utilisée pour vérifier la cohérence au déchiffrement
+            tailleCleUtilisee = tailleBits;
+
             
             // Chiffre le texte et récupère le résultat sous forme de bits
             int[] encryptedBits = aes.crypte(text);
@@ -338,30 +342,26 @@ public class FenetreAES extends JFrame {
                 throw new IllegalStateException("Aucun chiffrement n'a encore été effectué dans cette fenêtre " + "La clé nécessaire au déchiffrement n'est pas disponible");
             }
             
+            // Vérifie que la taille choisie correspond à celle du chiffrement
+            int tailleSelectionnee = recupererTailleCle();
+            if (tailleSelectionnee != tailleCleUtilisee) {
+                throw new IllegalArgumentException("La taille de clé sélectionnée ne correspond pas à celle " + "utilisée lors du chiffrement");
+            }
+
             String textBrut = zoneClair.getText();   // Récupère le texte à déchiffrer depuis la zone de saisie
             // Vérifie que la zone ne soit pas vide ou contient uniquement le texte indicatif
             if (textBrut.isEmpty() || textBrut.equals("Veuillez entrer un texte")) {
-                throw new IllegalArgumentException("Veuillez entrer un texte déchiffré valide.");
+                throw new IllegalArgumentException("Veuillez entrer un texte déchiffré valide");
             }
+            
             
             // On supprime tous les espaces, tabulations et retours à la ligne
             String text = textBrut.replaceAll("\\s+", "");
              // Vérifie que la longueyr du texte soit bien un multiple de 128 ou non vide
             if (text.length() % 128 != 0 || text.length() == 0) {
-                throw new IllegalArgumentException("Longueur invalide : " + text.length() + " caractères reçus (doit être un multiple de 8).");
+                throw new IllegalArgumentException("Longueur invalide : " + text.length() + " caractères reçus (doit être un multiple de 128)");
             }
             System.out.println("Longueur exacte reçue pour déchiffrement : " + text.length());
-            
-            // Récupère la taille de la clé choisie dans le JComboBox
-            String choixTaille = (String) tailleClé.getSelectedItem();
-            int tailleBits = 128; // Valeur par défaut
-            if (choixTaille != null) {
-                if (choixTaille.contains("192")) {
-                    tailleBits = 192;
-                } else if (choixTaille.contains("256")) {
-                    tailleBits = 256;
-                }
-            }
             
            // Transforme la chaîne de caractères de la zoneClair en tableau de bits
             int[] bitsCrypter = new int[text.length()];   // Prépare un tableau qui contiendra les bits du message chiffré
@@ -375,7 +375,7 @@ public class FenetreAES extends JFrame {
                 }
                 else {
                 	// Refuse tout caractère qui n'appartient pas au flux binaire
-                	throw new IllegalArgumentException("Le texte chiffré doit contenir uniquement des 0 et des 1.");
+                	throw new IllegalArgumentException("Le texte chiffré doit contenir uniquement des 0 et des 1");
                 }
             }
             
@@ -411,11 +411,43 @@ public class FenetreAES extends JFrame {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Erreur de Déchiffrement", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    
+    
+    /**
+     * Récupère la taille de la clé maître sélectionnée dans la liste déroulante
+     *
+     * @return la taille sélectionnée, exprimée en bits : 128, 192 ou 256
+     * @throws IllegalArgumentException si aucune taille n'est sélectionnée ou si la valeur est inconnue.
+     */
+    private int recupererTailleCle() {
+        // Récupère l'élément actuellement choisi.
+        String choixTaille = (String) tailleClé.getSelectedItem();
+
+        if (choixTaille == null) {
+            throw new IllegalArgumentException( "Veuillez sélectionner une taille de clé");
+        }
+
+        // Convertit le choix textuel en taille numérique
+        if (choixTaille.contains("192")) {
+            return 192;
+        }
+        if (choixTaille.contains("256")) {
+            return 256;
+        }
+        if (choixTaille.contains("128")) {
+            return 128;
+        }
+
+        // Protection si une valeur inattendue est ajoutée à la liste
+        throw new IllegalArgumentException("La taille de clé sélectionnée n'est pas reconnue");
+    }
+
 
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		new FenetreAES();
+		 new FenetreAES();
 	}
 
 
