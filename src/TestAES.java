@@ -24,23 +24,44 @@ public class TestAES {
 		 * Tests pour la première méthode stringToBits
 		 */
         System.out.println("Test methode 1 : ");
+        // Test 1 -> une seule lettre
 		String message1 = "A";
         int[] bits1 = aes.stringToBits(message1);
         System.out.print("Message : " + message1 + " -> Bits : " + Arrays.toString(bits1));
         //Message : A -> Bits : [0, 1, 0, 0, 0, 0, 0, 1]
         System.out.println();
         
+        // Test 2 -> deux lettres différentes
         String message2 = "AB";
         int[] bits2 = aes.stringToBits(message2);
         System.out.print("Message : " + message2 + " -> Bits : " + Arrays.toString(bits2));
         //Message : AB -> Bits : [0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0]
         System.out.println();
-        
+         
+        // Test 3 -> Mot en entier
         String message3 = "Bonjour";
         int[] bits3 = aes.stringToBits(message3);
         System.out.print("Message : " + message3 + " -> Bits : " + Arrays.toString(bits3));
         //Message : Bonjour -> Bits : [0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0]
         System.out.println();
+        
+        // Test 4 -> chaîne vide
+        System.out.println("Chaîne vide : " + (Arrays.equals(aes.stringToBits(""), new int[0]) ? "Réussi" : "ÉCHEC"));   // Chaîne vide : Réussi
+
+        // Test 5 -> caractère accentué encodé en UTF-8
+        int[] bitsAccent = {
+            1, 1, 0, 0, 0, 0, 1, 1,
+            1, 0, 1, 0, 1, 0, 0, 1
+        };
+        System.out.println("Caractère accentué : " + (Arrays.equals(aes.stringToBits("é"), bitsAccent) ? "Réussi" : "ÉCHEC"));   // Caractère accentué : Réussi
+
+        // Test 6 -> message null
+        try {
+            aes.stringToBits(null);
+            System.out.println("Message null : ÉCHEC");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Message null : Réussi");   // Message null : Réussi
+        }
         System.out.println();
         
 		
@@ -48,15 +69,42 @@ public class TestAES {
 		 * Tests pour la deuxieme method bitsToString 
 		 */
         System.out.println("Test methode 2 : ");
+        // Test 1 -> aller-retour 
 		String message4 = "Bonjour";
 		int[] bits4 = aes.stringToBits(message4);
-
 		System.out.println("Message original : " + message4);  //Message original : Bonjour
 		System.out.println("Bits : " + Arrays.toString(bits4));  // Bits : [0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0]
-
 		String resultat = aes.bitsToString(bits4);
-		
 		System.out.println("Message après conversion : " + resultat);  //Message apres conversion : Bonjour
+		
+		// Test 2 -> chaîne vide
+		System.out.println("Tableau vide : " + (aes.bitsToString(new int[0]).equals("") ? "Réussi" : "ÉCHEC"));   // Tableau vide : Réussi
+
+		// Test 3 -> tableau null
+		try {
+		    aes.bitsToString(null);
+		    System.out.println("Tableau null : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+		    System.out.println("Tableau null : Réussi");    // Tableau null : Réussi
+		}
+
+		// Test 4 -> longueur qui n'est pas un multiple de 8
+		try {
+		    aes.bitsToString(new int[7]);
+		    System.out.println("Longueur invalide : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+		    System.out.println("Longueur invalide : Réussi");   // Longueur invalide : Réussi
+		}
+
+		// Test 5 -> élément qui n'est pas un bit
+		int[] bitsInvalides = new int[8];
+		bitsInvalides[3] = 2;
+		try {
+		    aes.bitsToString(bitsInvalides);
+		    System.out.println("Bit invalide : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+		    System.out.println("Bit invalide : Réussi");   // Bit invalide : Réussi
+		}
 		
 		System.out.println();
 		
@@ -73,7 +121,6 @@ public class TestAES {
 		    }
 		    System.out.println();
 		}
-		
 		System.out.println();
 		// 65 204 49 31 
 		// 151 154 216 103 
@@ -85,6 +132,7 @@ public class TestAES {
 		 * Tests pour la quatrieme method bourrage 
 		 */
 		System.out.println("Test methode 4 : ");
+		// Test 1 -> bourrage classique
 		String messageB = "Bonjour";
 		int[] bitsB = aes.stringToBits(messageB);
 		int[] bitsBourrage = aes.bourrage(bitsB);
@@ -93,6 +141,37 @@ public class TestAES {
 		System.out.println("Taille après : " + bitsBourrage.length);           // Taille après : 128
 		System.out.println("Bits bourrés : " + Arrays.toString(bitsBourrage)); // [0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		
+		// Test 2 -> bourrage d'un message vide
+		int[] bourrageVide = aes.bourrage(new int[0]);
+		boolean videCorrect = bourrageVide.length == 128 && bourrageVide[0] == 1;
+		for (int i = 1; i < bourrageVide.length; i++) {
+		    if (bourrageVide[i] != 0) {
+		        videCorrect = false;
+		    }
+		}
+		System.out.println("Bourrage d'un message vide : " + (videCorrect ? "Réussi" : "ÉCHEC"));   // Bourrage d'un message vide : Réussi
+
+		// Test 3 -> message déjà long de 128 bits
+		int[] messageComplet = new int[128];
+		int[] bourrageComplet = aes.bourrage(messageComplet);
+		System.out.println("Message déjà sur un bloc : " + (bourrageComplet.length == 256 && bourrageComplet[128] == 1 ? "Réussi" : "ÉCHEC"));   // "Message déjà sur un bloc : Réussi
+
+		// Test 4 -> tableau null
+		try {
+		    aes.bourrage(null);
+		    System.out.println("Bourrage null : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+		    System.out.println("Bourrage null : Réussi");   // Bourrage null : Réussi
+		}
+
+		// Test 5 -> élément invalide
+		int[] messageInvalide = {0, 1, 2, 0};
+		try {
+		    aes.bourrage(messageInvalide);
+		    System.out.println("Bourrage avec bit invalide : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+		    System.out.println("Bourrage avec bit invalide : Réussi");   // Bourrage avec bit invalide : Réussi
+		}
 		
 		System.out.println();
 		
@@ -102,6 +181,7 @@ public class TestAES {
 		 * Tests pour la cinquieme method debourrage (les 2 methodes combinés)
 		 */
 		System.out.println("Test methode 5 : ");
+		// Test 1 -> aller retour
 		String message5 = "Bonjour";
 		int[] bits5 = aes.stringToBits(message5);
 		int[] bitsBourres = aes.bourrage(bits5);
@@ -110,6 +190,28 @@ public class TestAES {
 		System.out.println(bitsBourres.length);              // 128
 		System.out.println(bitsOriginaux.length);            // 56
 		System.out.println(aes.bitsToString(bitsOriginaux)); // Bonjour
+		
+		// Test 2 -> le message original contient des octets nuls à la fin
+		String messageZeros = "A\u0000";
+		int[] bitsAvecZeros = aes.stringToBits(messageZeros);
+		int[] resultatDebourrage = aes.debourrage(aes.bourrage(bitsAvecZeros));
+		System.out.println("Message avec zéros finaux : " + (Arrays.equals(bitsAvecZeros, resultatDebourrage) ? "Réussi" : "ÉCHEC"));   // "Message avec zéros finaux : Réussi
+
+		// Test 3 -> marqueur absent
+		try {
+		    aes.debourrage(new int[128]);
+		    System.out.println("Marqueur absent : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+		    System.out.println("Marqueur absent : Réussi");   // Marqueur absent : Réussi
+		}
+
+		// Test 4 -> tableau null
+		try {
+		    aes.debourrage(null);
+		    System.out.println("Tableau null : ÉCHEC");
+		} catch (IllegalArgumentException e) {
+		    System.out.println("Tableau null : Réussi");   //Tableau null : Réussi
+		}
 		
 		System.out.println();
 		
@@ -946,8 +1048,8 @@ public class TestAES {
         System.out.println("Colonne d'origine : " + Arrays.toString(colonneATester));     // Colonne d'origine : [219, 19, 83, 69]
         System.out.println("Colonne après prodAu : " + Arrays.toString(resultatVisuel));  // Colonne après prodAu : [142, 77, 161, 188]
         
-        int[] resultatAttendu = {0x8E, 0x4D, 0xA1, 0xBC};
-        System.out.println("Résultat de prodAu : " + (Arrays.equals(resultatVisuel, resultatAttendu) ? "Réussi" : "ÉCHEC"));   // Résultat de prodAu : Réussi
+        int[] resultatAttendu21 = {0x8E, 0x4D, 0xA1, 0xBC};
+        System.out.println("Résultat de prodAu : " + (Arrays.equals(resultatVisuel, resultatAttendu21) ? "Réussi" : "ÉCHEC"));   // Résultat de prodAu : Réussi
         System.out.println();
 		
 		
