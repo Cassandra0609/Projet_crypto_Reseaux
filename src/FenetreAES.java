@@ -58,10 +58,10 @@ public class FenetreAES extends JFrame {
 	 */
 	private File fichierOriginal = null; // Pour garder une trace du fichier .txt chargé
 	
-	private JComboBox<String> tailleClé;  // Menu déroulant pour choisir la taille de la clé : 128, 192 ou 256 bits
+	private JComboBox<String> tailleCle;  // Menu déroulant pour choisir la taille de la clé : 128, 192 ou 256 bits
 	private JLabel l1, l2, l3;   // Étiquettes textuelles descriptives
-	private JTextArea zoneClair, zoneRésultat;    // Zones de texte pour les entrées et les sorties
-	private JButton boutonCrypter, boutonDecrypter, boutonBrowser, boutonEffacer;   // Boutons d'action de l'application 
+	private JTextArea zoneClair, zoneResultat;    // Zones de texte pour les entrées et les sorties
+	private JButton boutonCrypter, boutonDecrypter, boutonFichier, boutonEffacer;   // Boutons d'action de l'application 
 	
 	
 	/**
@@ -111,7 +111,7 @@ public class FenetreAES extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;   // Alignement par défaut à l'ouest (gauche)
 		
         // Initialisation des composants interactifs
-		this.tailleClé = new JComboBox<>(new String[]{"128 bits", "192 bits", "256 bits"});   // Liste déroulante avec les trois tailles de clés autorisées
+		this.tailleCle = new JComboBox<>(new String[]{"128 bits", "192 bits", "256 bits"});   // Liste déroulante avec les trois tailles de clés autorisées
 		// Étiquettes descriptives
 		this.l1 = new JLabel("Clés maître de taille : "); 
 		l1.setForeground(Color.WHITE);
@@ -138,10 +138,10 @@ public class FenetreAES extends JFrame {
         });
 		
 		// Zone d'affichage du résultat  du chiffrement ou du déchiffrement
-		this.zoneRésultat = new JTextArea(5, 35);
-		zoneRésultat.setLineWrap(true);
-		zoneRésultat.setWrapStyleWord(true);
-		zoneRésultat.setEditable(false);    // Empêche la modification manuelle des résultats
+		this.zoneResultat = new JTextArea(5, 35);
+		zoneResultat.setLineWrap(true);
+		zoneResultat.setWrapStyleWord(true);
+		zoneResultat.setEditable(false);    // Empêche la modification manuelle des résultats
         
 		// Boutons d'action principale
         this.boutonCrypter = new JButton("Crypter");
@@ -158,10 +158,10 @@ public class FenetreAES extends JFrame {
         boutonDecrypter.setFocusPainted(false);
         boutonDecrypter.addActionListener(e -> decrypterTexte());   // Appelle DecrypterTexte() lorsque l'utilisateur clique sur le bouton
 		
-        this.boutonBrowser = new JButton("Browser");
-		boutonBrowser.setBackground(new Color(0, 150, 255));  // Couleur de fond du bouton
-		boutonBrowser.setForeground(Color.WHITE);
-		boutonBrowser.setFocusPainted(false);
+        this.boutonFichier = new JButton("Ouvrir un fichier");
+		boutonFichier.setBackground(new Color(0, 150, 255));  // Couleur de fond du bouton
+		boutonFichier.setForeground(Color.WHITE);
+		boutonFichier.setFocusPainted(false);
 		
 		this.boutonEffacer = new JButton("Effacer");
 		boutonEffacer.setPreferredSize(new Dimension(110, 30));
@@ -179,14 +179,14 @@ public class FenetreAES extends JFrame {
         mainPanel.add(this.l1, gbc);
         
         // Deuxième colonne : la liste déroulante
-        tailleClé.setPreferredSize(new Dimension(160, 25));
+        tailleCle.setPreferredSize(new Dimension(160, 25));
         gbc.gridx = 1; 
         gbc.gridy = 0;
         gbc.gridwidth = 1;   // Le composant occupe les colonnes 1
         // Autorise l'élargissement horizontal du composant
         gbc.fill = GridBagConstraints.NONE;   //Empêche de s'étirer horizontalement
         gbc.weightx = 0.0;
-        mainPanel.add(tailleClé, gbc);
+        mainPanel.add(tailleCle, gbc);
         gbc.gridwidth = 1; // Réinitialise la largeur pour les prochains composants
         
         
@@ -211,7 +211,7 @@ public class FenetreAES extends JFrame {
         mainPanel.add(scrollInput, gbc);
 
         // Le bouton ouvre un sélecteur de fichiers   
-        boutonBrowser.addActionListener(e -> parcourirFichiers());
+        boutonFichier.addActionListener(e -> parcourirFichiers());
         // Position du bouton Browser, à droite de la zone de saisie
         gbc.gridx = 2; 
         gbc.gridy = 1;
@@ -219,7 +219,7 @@ public class FenetreAES extends JFrame {
         gbc.weightx = 0.0;
         gbc.weighty = 0.0;
         gbc.anchor = GridBagConstraints.CENTER;
-        mainPanel.add(boutonBrowser, gbc);
+        mainPanel.add(boutonFichier, gbc);
         
         
         // Résultat du texte
@@ -233,7 +233,7 @@ public class FenetreAES extends JFrame {
         mainPanel.add(this.l3, gbc);
 
         // Ajoute des barres de défilement au résultat.
-        JScrollPane scrollResult = new JScrollPane(zoneRésultat);
+        JScrollPane scrollResult = new JScrollPane(zoneResultat);
         // Positionne la zone de résultat sur la troisième ligne
         gbc.gridx = 1; 
         gbc.gridy = 2;
@@ -287,6 +287,8 @@ public class FenetreAES extends JFrame {
 	        }
             try {           	
                 fichierOriginal = selectedFile;   // Mémorise le fichier après une lecture réussie
+                // Affiche clairement le nom ou le chemin du fichier dans la zone de texte
+                zoneClair.setText("[Fichier chargé : " + selectedFile.getName() + "]\nChemin : " + selectedFile.getAbsolutePath());
             } catch (Exception e) {
             	// Informe l'utilisateur en cas de problème de lecture
                 JOptionPane.showMessageDialog(this, "Impossible de lire le fichier : " + e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
@@ -304,15 +306,13 @@ public class FenetreAES extends JFrame {
      * Un nouvel objet AES est créé avec cette taille, puis utilisé pour chiffrer le texte
      *
      * Le résultat binaire est affiché dans la zone de résultat
-     * L'utilisateur peut également choisir de sauvegarder ce résultat dans un nouveau fichier .txt
-     *
-     * @throws IllegalArgumentException si le texte saisi est vide ou correspond au texte indicatif
      */
     private void crypterTexte() {
         try {
             String text;
+            boolean provientDUnFichier = (fichierOriginal != null);
             // Si un fichier a été sélectionné via Browser, on lit directement le fichier
-            if (fichierOriginal != null) {
+            if (provientDUnFichier) {
                 text = Files.readString(fichierOriginal.toPath());
             } else {
                 // Sinon on récupère ce que l'utilisateur a tapé à la main
@@ -326,12 +326,10 @@ public class FenetreAES extends JFrame {
             // Récupère la taille de la clé choisie : 128, 192 ou 256 bits
             int tailleBits = recupererTailleCle();
             
-            // Initialise l'objet AES avec la taille choisie
-            aes = new AES(tailleBits);
-            
-            // Mémorise la taille utilisée pour vérifier la cohérence au déchiffrement
-            tailleCleUtilisee = tailleBits;
-
+            if (aes == null || tailleBits != tailleCleUtilisee) {
+                aes = new AES(tailleBits);
+                tailleCleUtilisee = tailleBits;
+            }
             
             // Chiffre le texte et récupère le résultat sous forme de bits
             int[] encryptedBits = aes.crypte(text);
@@ -343,35 +341,18 @@ public class FenetreAES extends JFrame {
                 sb.append(bit);
             }
             
-            // Affiche le résultat binaire dans la zone de résultat.
-            zoneRésultat.setText(sb.toString());
-            
-            // Demande à l'utilisateur s'il souhaite sauvegarder le résultat.
-            int choix = JOptionPane.showConfirmDialog(this,"Voulez-vous sauvegarder le texte chiffré dans un nouveau fichier .txt ?", "Sauvegarder le fichier chiffré", JOptionPane.YES_NO_OPTION);
-	        
-            // Ouvre le sélecteur de sauvegarde uniquement si l'utilisateur accepte
-            if (choix == JOptionPane.YES_OPTION) {
-	            JFileChooser saveChooser = new JFileChooser();
-	            // Propose un nom basé sur le fichier source lorsqu'il existe
-                if (fichierOriginal != null) {
-	                saveChooser.setSelectedFile(new File(fichierOriginal.getParent(), "chiffre_" + fichierOriginal.getName()));
-	            } else {
-	            	// Propose un nom générique
-	                saveChooser.setSelectedFile(new File("texte_chiffre.txt"));
-	            }
-	            int saveResult = saveChooser.showSaveDialog(this);
-	            // Continue uniquement si l'utilisateur confirme un emplacement
-                if (saveResult == JFileChooser.APPROVE_OPTION) {
-	                File fichierCible = saveChooser.getSelectedFile();
-	                // Ajoute l'extension .txt si elle est absente
-                    if (!fichierCible.getName().toLowerCase().endsWith(".txt")) {
-	                    fichierCible = new File(fichierCible.getAbsolutePath() + ".txt");
-	                }
-                    // Écrit le résultat binaire dans le fichier
-                    Files.writeString(fichierCible.toPath(), sb.toString());
-	                JOptionPane.showMessageDialog(this, "Fichier chiffré créé avec succès !");
-	            }
-	        }
+            // Affichage et sauvegarde selon l'origine (Fichier vs Saisie manuelle)
+            if (provientDUnFichier) {
+                File fichierCible = new File(fichierOriginal.getParent(), "chiffre_" + fichierOriginal.getName());
+                Files.writeString(fichierCible.toPath(), sb.toString());
+                zoneResultat.setText("[ SUCCÈS : Fichier chiffré généré ]\n\n" + "Nom du fichier : " + fichierCible.getName() + "\n" + "Dossier cible : " + fichierCible.getAbsolutePath());
+            } else {
+                if (sb.length() > 1000) {
+                    zoneResultat.setText(sb.substring(0, 1000) + "\n\n... [Texte trop long : affichage tronqué à l'écran]");
+                } else {
+                    zoneResultat.setText(sb.toString());
+                }
+            }
         } catch (Exception ex) {
         	// Affiche l'erreur rencontrée lors du chiffrement ou de la sauvegarde.
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Erreur de Chiffrement", JOptionPane.ERROR_MESSAGE);
@@ -385,12 +366,8 @@ public class FenetreAES extends JFrame {
      * La méthode supprime les espaces et les retours à la ligne, vérifie que les caractères sont uniquement des 0 et des 1, puis transforme la chaîne en tableau d'entiers avant d'appeler aes.decrypte()
      *
      * Le résultat en texte clair est affiché dans la zone de résultat
-     * L'utilisateur peut choisir de le sauvegarder dans un fichier .txt
      *
      * Le même objet AES et la même clé que lors du chiffrement sont nécessaires
-     *
-     * @throws IllegalStateException si aucun chiffrement n'a encore été effectué dans cette fenêtre
-     * @throws IllegalArgumentException si la taille ou le contenu du message binaire est invalide
      */
     private void decrypterTexte() {
         try {
@@ -404,13 +381,21 @@ public class FenetreAES extends JFrame {
             if (tailleSelectionnee != tailleCleUtilisee) {
                 throw new IllegalArgumentException("La taille de clé sélectionnée ne correspond pas à celle " + "utilisée lors du chiffrement");
             }
+            
+            String textBrut;
+            boolean provientDUnFichier = (fichierOriginal != null);
 
-            String textBrut = zoneClair.getText();   // Récupère le texte à déchiffrer depuis la zone de saisie
+            // Récupération du texte (le contenu binaire chiffré)
+            if (provientDUnFichier) {
+            	textBrut = Files.readString(fichierOriginal.toPath());
+            } else {
+            	textBrut = zoneClair.getText();
+            }
+            
             // Vérifie que la zone ne soit pas vide ou contient uniquement le texte indicatif
             if (textBrut.isEmpty() || textBrut.equals("Veuillez entrer un texte")) {
                 throw new IllegalArgumentException("Veuillez entrer un texte déchiffré valide");
             }
-            
             
             // On supprime tous les espaces, tabulations et retours à la ligne
             String text = textBrut.replaceAll("\\s+", "");
@@ -439,30 +424,17 @@ public class FenetreAES extends JFrame {
             // Déchiffre les bits avec le même objet AES que lors du chiffrement
             String textDecrypter = aes.decrypte(bitsCrypter);
             
-            // Affiche le texte clair retrouvé
-            zoneRésultat.setText(textDecrypter);
-            
-            // Demande si l'utilisateur souhaite sauvegarder le texte déchiffré.
-            int choix = JOptionPane.showConfirmDialog(this,"Voulez-vous restaurer et sauvegarder le fichier déchiffré en .txt ?", "Restaurer le fichier original", JOptionPane.YES_NO_OPTION);
-	        
-	        if (choix == JOptionPane.YES_OPTION) {
-	            JFileChooser saveChooser = new JFileChooser();
-	            // Propose un nom par défaut pour le fichier restauré
-                saveChooser.setSelectedFile(new File("original_restaure.txt"));
-	            
-	            int saveResult = saveChooser.showSaveDialog(this);
-	            // Sauvegarde uniquement si l'utilisateur confirme
-                if (saveResult == JFileChooser.APPROVE_OPTION) {
-	                File fichierCible = saveChooser.getSelectedFile();
-	                // Ajoute .txt si l'extension est absente
-                    if (!fichierCible.getName().toLowerCase().endsWith(".txt")) {
-	                    fichierCible = new File(fichierCible.getAbsolutePath() + ".txt");
-	                }
-                    // Écrit le texte restauré dans le fichier de sortie
-                    Files.writeString(fichierCible.toPath(), textDecrypter);
-	                JOptionPane.showMessageDialog(this, "Fichier original restauré avec succès !");
-	            }
-	        }
+            // Affichage conditionnel dans la zone de résultat
+            if (provientDUnFichier) {
+                // si c'est un fichier : Sauvegarde automatique du fichier déchiffré
+                File fichierCible = new File(fichierOriginal.getParent(), "dechiffre_" + fichierOriginal.getName());
+                Files.writeString(fichierCible.toPath(), textDecrypter);
+                
+                zoneResultat.setText("[ SUCCÈS : Fichier déchiffré généré ]\n\n" + "Nom du fichier : " + fichierCible.getName() + "\n" + "Dossier cible : " + fichierCible.getAbsolutePath());
+            } else {
+                // si c'est manuel : On affiche le texte clair directement dans la zone de résultat
+                zoneResultat.setText(textDecrypter);
+            }
         } catch (Exception ex) {
         	// Affiche les erreurs de saisie, de déchiffrement ou de sauvegarde
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Erreur de Déchiffrement", JOptionPane.ERROR_MESSAGE);
@@ -477,10 +449,10 @@ public class FenetreAES extends JFrame {
      */
     private void effacerTout() {
         zoneClair.setText("Veuillez entrer un texte");
-        zoneRésultat.setText("");
+        zoneResultat.setText("");
         fichierOriginal = null;
         aes = null;
-        tailleClé.setSelectedIndex(0); // Remet par défaut sur 128 bits
+        tailleCle.setSelectedIndex(0); // Remet par défaut sur 128 bits
     }
     
     
@@ -493,7 +465,7 @@ public class FenetreAES extends JFrame {
      */
     private int recupererTailleCle() {
         // Récupère l'élément actuellement choisi.
-        String choixTaille = (String) tailleClé.getSelectedItem();
+        String choixTaille = (String) tailleCle.getSelectedItem();
 
         if (choixTaille == null) {
             throw new IllegalArgumentException( "Veuillez sélectionner une taille de clé");
