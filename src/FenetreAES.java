@@ -2,13 +2,16 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.io.File;
 import java.nio.file.Files;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -58,7 +61,7 @@ public class FenetreAES extends JFrame {
 	private JComboBox<String> tailleClé;  // Menu déroulant pour choisir la taille de la clé : 128, 192 ou 256 bits
 	private JLabel l1, l2, l3;   // Étiquettes textuelles descriptives
 	private JTextArea zoneClair, zoneRésultat;    // Zones de texte pour les entrées et les sorties
-	private JButton boutonCrypter, boutonDecrypter, boutonBrowser;   // Boutons d'action de l'application 
+	private JButton boutonCrypter, boutonDecrypter, boutonBrowser, boutonEffacer;   // Boutons d'action de l'application 
 	
 	
 	/**
@@ -71,9 +74,38 @@ public class FenetreAES extends JFrame {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);   // Arrête le programme proprement quand on clique sur la croix X
 		this.setLayout(new BorderLayout(10,10));   // Disposition globale de la fenêtre
 		
+		// Charge l'image de fond proprement depuis les ressources du projet
+		Image imageFond = null;
+		try {
+		    // Le "/" cherche à la racine du classpath (dans src)
+		    imageFond = new ImageIcon(getClass().getResource("/Fond_application_AES.jpg")).getImage();
+		} catch (Exception e) {
+		    System.out.println("Erreur de chargement de l'image : " + e.getMessage());
+		}
+		
+		final Image imgFinal = imageFond; // Nécessaire pour l'utiliser dans la classe anonyme
+
+		// Crée un panneau personnalisé qui dessine l'image en arrière-plan.
+		JPanel fond = new JPanel(new BorderLayout(10, 10)) {
+		    @Override
+		    protected void paintComponent(Graphics g) {
+		        super.paintComponent(g);
+		        if (imgFinal != null) {
+		            // Adapte l'image à la taille exacte du panneau.
+		            g.drawImage(imgFinal, 0, 0, getWidth(), getHeight(), this);
+		        }
+		    }
+		};
+
+		// Utilise ce panneau comme contenu principal de la fenêtre.
+		this.setContentPane(fond);
+
+		
 		// Configuration Panel principal avec une grille (GridBagLayout)
 		JPanel mainPanel = new JPanel(new GridBagLayout());   // Crée le panneau principal avec une grille flexible
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));   // Marges intérieures globales
+		// Rend le panneau transparent pour laisser voir l'image.
+		mainPanel.setOpaque(false);
+		mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));   // Marges intérieures globales
         GridBagConstraints gbc = new GridBagConstraints();   //GridBagConstraints définit la position et le comportement des composants ajoutés au GridBagLayou
         gbc.insets = new Insets(10, 10, 10, 10);   // Espacement externe autour de chaque composant
         gbc.anchor = GridBagConstraints.WEST;   // Alignement par défaut à l'ouest (gauche)
@@ -81,9 +113,15 @@ public class FenetreAES extends JFrame {
         // Initialisation des composants interactifs
 		this.tailleClé = new JComboBox<>(new String[]{"128 bits", "192 bits", "256 bits"});   // Liste déroulante avec les trois tailles de clés autorisées
 		// Étiquettes descriptives
-		this.l1 = new JLabel("Clés maître de taille : ");  
+		this.l1 = new JLabel("Clés maître de taille : "); 
+		l1.setForeground(Color.WHITE);
 		this.l2 = new JLabel("Texte à crypter/décrypter : ");
+		l2.setForeground(Color.WHITE);
 		this.l3 = new JLabel("Résultat du texte : ");
+		l3.setForeground(Color.WHITE);
+		l1.setOpaque(false);
+		l2.setOpaque(false);
+		l3.setOpaque(false);
 		
 		// Zone de saisie du texte
 		this.zoneClair = new JTextArea(5, 35);
@@ -108,16 +146,29 @@ public class FenetreAES extends JFrame {
 		// Boutons d'action principale
         this.boutonCrypter = new JButton("Crypter");
         boutonCrypter.setPreferredSize(new Dimension(110, 30));    // Dimension du bouton
+        boutonCrypter.setBackground(new Color(46, 204, 113));
+        boutonCrypter.setForeground(Color.WHITE);
+        boutonCrypter.setFocusPainted(false);
         boutonCrypter.addActionListener(e -> crypterTexte());    // Appelle CrypterTexte() lorsque l'utilisateur clique sur le bouton
         
         this.boutonDecrypter = new JButton("Décrypter");
         boutonDecrypter.setPreferredSize(new Dimension(110, 30));
+        boutonDecrypter.setBackground(new Color(0, 180, 216));
+        boutonDecrypter.setForeground(Color.WHITE);
+        boutonDecrypter.setFocusPainted(false);
         boutonDecrypter.addActionListener(e -> decrypterTexte());   // Appelle DecrypterTexte() lorsque l'utilisateur clique sur le bouton
 		
         this.boutonBrowser = new JButton("Browser");
 		boutonBrowser.setBackground(new Color(0, 150, 255));  // Couleur de fond du bouton
 		boutonBrowser.setForeground(Color.WHITE);
 		boutonBrowser.setFocusPainted(false);
+		
+		this.boutonEffacer = new JButton("Effacer");
+		boutonEffacer.setPreferredSize(new Dimension(110, 30));
+		boutonEffacer.setBackground(new Color(100, 100, 100));
+		boutonEffacer.setForeground(Color.WHITE);
+		boutonEffacer.setFocusPainted(false);
+		boutonEffacer.addActionListener(e -> effacerTout());
         
 		// Taille clé maitre
 		// Première ligne, première colonne : l'étiquette
@@ -128,13 +179,13 @@ public class FenetreAES extends JFrame {
         mainPanel.add(this.l1, gbc);
         
         // Deuxième colonne : la liste déroulante
-        tailleClé.setPreferredSize(new Dimension(250, 25));
+        tailleClé.setPreferredSize(new Dimension(160, 25));
         gbc.gridx = 1; 
         gbc.gridy = 0;
-        gbc.gridwidth = 2;   // Le composant occupe les colonnes 1 et 2
+        gbc.gridwidth = 1;   // Le composant occupe les colonnes 1
         // Autorise l'élargissement horizontal du composant
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.NONE;   //Empêche de s'étirer horizontalement
+        gbc.weightx = 0.0;
         mainPanel.add(tailleClé, gbc);
         gbc.gridwidth = 1; // Réinitialise la largeur pour les prochains composants
         
@@ -200,8 +251,10 @@ public class FenetreAES extends JFrame {
         // Boutons Chiffrer / Déchiffrer
         // FlowLayout centre les boutons et ajoute un espace entre eux.
         JPanel panelButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
+        panelButtons.setOpaque(false);
         panelButtons.add(boutonCrypter);
         panelButtons.add(boutonDecrypter);
+        panelButtons.add(boutonEffacer);
         // Place les deux boutons en bas de la fenêtre
         add(panelButtons, BorderLayout.SOUTH);
 		
@@ -232,11 +285,8 @@ public class FenetreAES extends JFrame {
 	            JOptionPane.showMessageDialog(this, "Veuillez sélectionner uniquement un fichier au format .txt", "Erreur de format", JOptionPane.ERROR_MESSAGE);
 	            return;
 	        }
-            try {
-            	fichierOriginal = selectedFile;   // Conserve le fichier uniquement si la lecture a réussi
-	            // Lit tout le contenu du fichier textuel et l'affiche dans la zone clair
-            	String contenu = Files.readString(fichierOriginal.toPath());
-	            zoneClair.setText(contenu);   // Affiche le contenu du fichier dans la zone de saisie
+            try {           	
+                fichierOriginal = selectedFile;   // Mémorise le fichier après une lecture réussie
             } catch (Exception e) {
             	// Informe l'utilisateur en cas de problème de lecture
                 JOptionPane.showMessageDialog(this, "Impossible de lire le fichier : " + e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
@@ -260,7 +310,14 @@ public class FenetreAES extends JFrame {
      */
     private void crypterTexte() {
         try {
-            String text = zoneClair.getText();   // // Récupère le texte saisi par l'utilisateur
+            String text;
+            // Si un fichier a été sélectionné via Browser, on lit directement le fichier
+            if (fichierOriginal != null) {
+                text = Files.readString(fichierOriginal.toPath());
+            } else {
+                // Sinon on récupère ce que l'utilisateur a tapé à la main
+                text = zoneClair.getText();
+            }
             // Vérifie que l'utilisateur a bien fourni un texte
             if (text.isEmpty() || text.equals("Veuillez entrer un texte")) {
                 throw new IllegalArgumentException("Veuillez entrer un texte valide à chiffrer.");
@@ -357,7 +414,7 @@ public class FenetreAES extends JFrame {
             
             // On supprime tous les espaces, tabulations et retours à la ligne
             String text = textBrut.replaceAll("\\s+", "");
-             // Vérifie que la longueyr du texte soit bien un multiple de 128 ou non vide
+            // Vérifie que la longueur du texte est non nulle et multiple de 128
             if (text.length() % 128 != 0 || text.length() == 0) {
                 throw new IllegalArgumentException("Longueur invalide : " + text.length() + " caractères reçus (doit être un multiple de 128)");
             }
@@ -410,6 +467,20 @@ public class FenetreAES extends JFrame {
         	// Affiche les erreurs de saisie, de déchiffrement ou de sauvegarde
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Erreur de Déchiffrement", JOptionPane.ERROR_MESSAGE);
         }
+    }
+    
+    
+    
+    /**
+     * Réinitialise l'ensemble de l'interface et des variables de session
+     * (zones de texte, fichier chargé, instance AES).
+     */
+    private void effacerTout() {
+        zoneClair.setText("Veuillez entrer un texte");
+        zoneRésultat.setText("");
+        fichierOriginal = null;
+        aes = null;
+        tailleClé.setSelectedIndex(0); // Remet par défaut sur 128 bits
     }
     
     
