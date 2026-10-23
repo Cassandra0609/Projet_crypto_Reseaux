@@ -10,7 +10,7 @@ public class AES {
 	 * Constantes
 	 */
 	/** Taille standard d'un bloc AES en bits */
-	private static int taille_bloc = 128;
+	private static final int taille_bloc = 128;
 	/** Tableau des constantes de ronde utilisées lors de l'expansion de clé */
 	private static final int [] Rcon = {
 			0x00, // Indice 0 inutilisé
@@ -204,7 +204,7 @@ public class AES {
 		    }
 		}
 		int reste = bits.length % this.taille_bloc;
-		int bitsAAjouter = 128 - reste;  // calcule combien de bits il faut ajouter pour atteindre le prochain multiple de 128
+		int bitsAAjouter = this.taille_bloc - reste;  // calcule combien de bits il faut ajouter pour atteindre le prochain multiple de 128
 		int [] resultat = new int [bits.length + bitsAAjouter]; // tab qui contiendra le message + le bourrage
 		// Parcourt tous les bits du message original
 		for (int i = 0; i < bits.length; i++) {
