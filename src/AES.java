@@ -1005,9 +1005,9 @@ public class AES {
 	/**
 	 * Déchiffre un message binaire chiffré pour retrouver le texte clair original.
      *
-	 * @param messageEnBits Le tableau de bits chiffré (ne doit pas être null, longueur multiple de 128)
+	 * @param messageEnBits Le tableau de bits chiffré (ne doit pas être null, non vide et de longueur multiple de 128)
 	 * @return Le texte clair déchiffré sous forme de chaîne de caractères
-	 * @throws IllegalArgumentException si le message est null, si un bit n'est pas 0 ou 1 ou si la longueur n'est pas un multiple de 128 bits
+	 * @throws IllegalArgumentException si le message est null ou vide, si un bit n'est pas 0 ou 1 ou si la longueur n'est pas un multiple de 128 bits
 	 */ 
 	public String decrypte(int [] messageEnBits) {
 		// Vérifie que le tableau bits ne soit pas null
