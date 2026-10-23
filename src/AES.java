@@ -1,6 +1,5 @@
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-import java.util.Arrays;
 
 /**
  * Implémentation de l’AES 128/192/256
@@ -11,9 +10,9 @@ public class AES {
 	 * Constantes
 	 */
 	/** Taille standard d'un bloc AES en bits */
-	static int taille_bloc = 128;
+	private static int taille_bloc = 128;
 	/** Tableau des constantes de ronde utilisées lors de l'expansion de clé */
-	static int [] Rcon = {
+	private static final int [] Rcon = {
 			0x00, // Indice 0 inutilisé
 		    0x01, // RC1
 		    0x02, // RC2
@@ -27,7 +26,7 @@ public class AES {
 		    0x36  // RC10
 	};
 	/** Table de substitution standard de l'AES pour le chiffrement */
-	static int [][] sBox = {
+	private static final int [][] sBox = {
 			{99,124,119,123,242,107,111,197,48,1,103,43,254,215,171,118},
 			{202,130,201,125,250,89,71,240,173,212,162,175,156,164,114,192},
 			{183,253,147,38,54,63,247,204,52,165,229,241,113,216,49,21},
@@ -46,7 +45,7 @@ public class AES {
 			{140,161,137,13,191,230,66,104,65,153,45,15,176,84,187,22}
 	};
 	/** Table de substitution inverse de l'AES pour le déchiffrement */
-	static int [][] sBoxInv = {
+	private static final int [][] sBoxInv = {
 			{82,9,106,213,48,54,165,56,191,64,163,158,129,243,215,251},
 			{124,227,57,130,155,47,255,135,52,142,67,68,196,222,233,203},
 			{84,123,148,50,166,194,35,61,238,76,149,11,66,250,195,78},
@@ -1013,7 +1012,7 @@ public class AES {
 	public String decrypte(int [] messageEnBits) {
 		// Vérifie que le tableau bits ne soit pas null
 		if (messageEnBits == null) {
-		    throw new IllegalArgumentException("Le tableau de bits ne doit pas être nulll");
+		    throw new IllegalArgumentException("Le tableau de bits ne doit pas être null");
 		}
 		// Vérifie que les éléments du tableau bits soient bien des bits (1 ou 0)
 		for (int bit : messageEnBits) {
